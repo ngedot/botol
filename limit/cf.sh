@@ -1,12 +1,12 @@
 #!/bin/bash
-MYIP=$(wget -qO- icanhazip.com);
+MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 );
 apt install jq curl -y
 #read -p "Masukan Domain (contoh : Dragon)" domen
-DOMAIN=amgeekz.tech
+DOMAIN=cepat.top
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
-dns=${sub}.amgeekz.tech
-CF_ID=inodsanjaya1998@gmail.com
-CF_KEY=c2dd68b68b4b6cdb41823d085f70a86c1545c
+dns=${sub}.cepat.top
+CF_ID=rinandaerfan@gmail.com
+CF_KEY=NPgcOB7q3IGJYuhHvC71cApMNpeldHkPs3rVydoQ
 set -euo pipefail
 IP=$(wget -qO- icanhazip.com);
 echo "Updating DNS for ${dns}..."
