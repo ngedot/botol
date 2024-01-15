@@ -6,7 +6,7 @@ apt update && apt upgrade -y && reboot
 ```
 ### INSTALL SCRIPT 
 ```
-apt install -y && apt update -y && apt upgrade -y && apt install curl -y &&  apt install lolcat -y && gem install lolcat && wget -q https://raw.githubusercontent.com/ngedot/botol/main/premi.sh && chmod +x premi.sh && ./premi.sh
+sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt install -y && apt update -y && apt upgrade -y && apt install curl -y &&  apt install lolcat -y && gem install lolcat && wget -q https://raw.githubusercontent.com/ngedot/botol/main/premi.sh && chmod +x premi.sh && ./premi.sh
 
 ```
 ### AKTIFKAN SLOWDNS
