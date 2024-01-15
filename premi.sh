@@ -680,9 +680,9 @@ print_install "Menginstall Vnstat"
 apt -y install vnstat > /dev/null 2>&1
 /etc/init.d/vnstat restart
 apt -y install libsqlite3-dev > /dev/null 2>&1
-wget https://humdi.net/vnstat/vnstat-2.6.tar.gz
-tar zxvf vnstat-2.6.tar.gz
-cd vnstat-2.6
+wget https://humdi.net/vnstat/vnstat-2.11.tar.gz
+tar zxvf vnstat-2.11.tar.gz
+cd vnstat-2.11
 ./configure --prefix=/usr --sysconfdir=/etc && make && make install
 cd
 vnstat -u -i $NET
@@ -691,8 +691,8 @@ chown vnstat:vnstat /var/lib/vnstat -R
 systemctl enable vnstat
 /etc/init.d/vnstat restart
 /etc/init.d/vnstat status
-rm -f /root/vnstat-2.6.tar.gz
-rm -rf /root/vnstat-2.6
+rm -f /root/vnstat-2.11.tar.gz
+rm -rf /root/vnstat-2.11
 print_success "Vnstat"
 }
 
