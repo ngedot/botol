@@ -1,3 +1,4 @@
+#!/bin/bash
 #Instal Xray
 function install_xray() {
 clear
