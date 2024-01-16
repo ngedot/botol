@@ -6,9 +6,9 @@ DOMAIN=cepat.top
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
 dns=${sub}.cepat.top
 CF_ID=rinandaerfan@gmail.com
-CF_KEY=NPgcOB7q3IGJYuhHvC71cApMNpeldHkPs3rVydoQ
+CF_KEY=5LTIcSzFVOWYMyIozJJ98iFfi8NvMwHWKZU434Eh
 set -euo pipefail
-IP=$(wget -qO- icanhazip.com);
+IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 echo "Updating DNS for ${dns}..."
 ZONE=$(curl -sLX GET "https://api.cloudflare.com/client/v4/zones?name=${DOMAIN}&status=active" \
      -H "X-Auth-Email: ${CF_ID}" \
