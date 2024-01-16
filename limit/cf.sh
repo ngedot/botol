@@ -6,7 +6,7 @@ DOMAIN=cepat.top
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
 dns=${sub}.cepat.top
 CF_ID=rinandaerfan@gmail.com
-CF_KEY=5LTIcSzFVOWYMyIozJJ98iFfi8NvMwHWKZU434Eh
+CF_KEY=vOQxhG5vED6_DzQ-gcPDTb8crTKET208F8GUXBr2
 set -euo pipefail
 IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 echo "Updating DNS for ${dns}..."
