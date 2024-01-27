@@ -43,15 +43,15 @@ SERONLINE=$(uptime -p | cut -d " " -f 2-10000)
 
 # username
 rm -f /usr/bin/user
-username=$(curl https://raw.githubusercontent.com/ServerPremiumVIP/VPS/master/Aktivasi | grep $MYIP | awk '{print $2}')
+username=$(curl https://raw.githubusercontent.com/ngedot/botol/master/Aktivasi | grep $MYIP | awk '{print $2}')
 echo "$username" >/usr/bin/user
 # validity
 rm -f /usr/bin/e
-valid=$(curl https://raw.githubusercontent.com/ServerPremiumVIP/VPS/master/Aktivasi | grep $MYIP | awk '{print $3}')
+valid=$(curl https://raw.githubusercontent.com/ngedot/botol/master/Aktivasi | grep $MYIP | awk '{print $3}')
 echo "$valid" >/usr/bin/e
 # version
 rm -f /usr/bin/ver
-version=$(curl https://raw.githubusercontent.com/ServerPremiumVIP/VPS/master/Aktivasi | grep $MYIP | awk '{print $5}')
+version=$(curl https://raw.githubusercontent.com/ngedot/botol/master/Aktivasi | grep $MYIP | awk '{print $5}')
 echo "$version" >/usr/bin/ver
 # DETAIL ORDER
 username=$(cat /usr/bin/user)
@@ -75,7 +75,7 @@ mai="datediff "$Exp" "$DATE""
 Info="${green}Active${NC}"
 Error="${RED}ExpiRED${NC}"
 today=`date -d "0 days" +"%Y-%m-%d"`
-Exp1=$(curl https://raw.githubusercontent.com/ServerPremiumVIP/VPS/master/Aktivasi | grep $MYIP | awk '{print $3}')
+Exp1=$(curl https://raw.githubusercontent.com/ngedot/botol/master/Aktivasi | grep $MYIP | awk '{print $3}')
 if [[ $today < $Exp1 ]]; then
 sts="${Info}"
 else
@@ -289,7 +289,7 @@ else
 fi
 ##########
 clear
-wget https://raw.githubusercontent.com/ngempeng/jempol/main/ssh-udp/install-udp && rm -rf /tmp/cookies.txt && chmod +x install-udp && ./install-udp
+wget https://raw.githubusercontent.com/ngedot/botol/main/ssh-udp/install-udp && rm -rf /tmp/cookies.txt && chmod +x install-udp && ./install-udp
 ;;
 23) clear ; clearcache ;;
 24) clear ; add-bot-panel ;;
