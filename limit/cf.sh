@@ -2,11 +2,11 @@
 MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 );
 apt install jq curl -y
 #read -p "Masukan Domain (contoh : Dragon)" domen
-DOMAIN=cepat.top
+DOMAIN=sshvpn.top
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
-dns=${sub}.cepat.top
+dns=${sub}.sshvpn.top
 CF_ID=rinandaerfan@gmail.com
-CF_KEY=vOQxhG5vED6_DzQ-gcPDTb8crTKET208F8GUXBr2
+CF_KEY=-pf4mg0mlCiqAluUohQXUNnycs7VSO0dtWLUlo77
 set -euo pipefail
 IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 echo "Updating DNS for ${dns}..."
