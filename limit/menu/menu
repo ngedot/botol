@@ -249,7 +249,7 @@ menu ;;
 echo -e "${green}ANDA YAKIN UNTUK UPDATE SCRIPT INI ? $NC"
 echo -e "${green}MINIMAL RAM 2 GB BIAR DISK TIDAK FULL $NC"
 echo -e "${green}OS SUPPORT UBUNTU 20.04 ONLY $NC"
-wget https://raw.githubusercontent.com/ngempeng/botol/jempol/update.sh && chmod +x update.sh && ./update.sh ;;
+wget https://raw.githubusercontent.com/ngedot/botol/update.sh && chmod +x update.sh && ./update.sh ;;
 17) clear ; menu-backup ;;
 18) clear ; reboot ;;
 19) clear ; restart ;;
