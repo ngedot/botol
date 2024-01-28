@@ -17,6 +17,7 @@ grenbo="\e[92;1m"
 yellow='\033[0;33m'
 ISP=$(cat /etc/xray/isp)
 CITY=$(cat /etc/xray/city)
+oid=$(cat /usr/bin/ver)
 domain=$(cat /etc/xray/domain)
 WKT=$(curl -s ipinfo.io/timezone)
 IPVPS=$(curl -s ipv4.icanhazip.com)
@@ -209,9 +210,9 @@ printf "
 🔰 » Client Name  : $Name
 🔰 » Total RAM    : $tram MB
 🔰 » City Server  : $CITY
-🔰 » Domain       : $(cat /etc/xray/domain)
+🔰 » Domain       : $domain
 🔰 » Exp Script   : $Exp
-🔰 » Version      : Version V15.7.1
+🔰 » Version      : $oid
 ━━━━━━━━━━━━━━━━━━━━━━━
  🐾🕊️ SERVICE VPS INFO 🕊️🐾   
 ━━━━━━━━━━━━━━━━━━━━━━━
