@@ -39,7 +39,7 @@ exp=$(grep -E "^#! " "/etc/xray/config.json" | cut -d ' ' -f 3 | sed -n "${CLIEN
 hariini=`date -d "0 days" +"%Y-%m-%d"`
 cat >/var/www/html/trojan-$user.txt <<-END
 ◇━━━━━━━━━━━━━━━━━◇
-  ILHM STORE SCRIPT
+  ServerPremiumVIP
 ◇━━━━━━━━━━━━━━━━━◇
 
 # Format Trojan GO/WS
