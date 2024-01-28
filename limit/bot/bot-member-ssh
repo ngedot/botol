@@ -7,7 +7,7 @@ NMS="LOCKED"
 NMM="UNLOCKED"
 MYIP=$(wget -qO- ipinfo.io/ip)
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "🐾🕊️ SHOW SSH OVPN ACCOUNT 🕊️🐾"
+echo -e "🐾🕊️ SHOW SSH ACCOUNT 🕊️🐾"
 echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━"
 while read expired; do
     AKUN="$(echo $expired | cut -d: -f1)"
