@@ -1,7 +1,7 @@
 
 ### Update & Upgrade 
 ```
-apt-get update -y && apt-get upgrade -y && reboot
+sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt-get update -y && apt-get upgrade -y && reboot
 
 ```
 ### INSTALL SCRIPT 
