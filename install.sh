@@ -741,18 +741,13 @@ print_success "Backup Server"
 }
 
 clear
-function ins_swab(){
-clear
-print_install "TCP BBR"
-    # > Singkronisasi jam
-    chronyd -q 'server 0.id.pool.ntp.org iburst'
-    chronyc sourcestats -v
-    chronyc tracking -v
+# > Singkronisasi jam
+chronyd -q 'server 0.id.pool.ntp.org iburst'
+chronyc sourcestats -v
+chronyc tracking -v
     
-    wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
-print_success "TCP BBR"
-}
-
+wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
+clear
 function ins_Fail2ban(){
 clear
 print_install "Menginstall Fail2ban"
