@@ -185,7 +185,11 @@ function is_root() {
 # Buat direktori xray
 print_install "Membuat direktori xray"
     mkdir -p /etc/xray
-    curl -s ifconfig.me > /etc/xray/ipvps
+    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
+    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
+    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
+    curl -s https://raw.githubusercontent.com/ngempeng/jempol/main/izin >>/etc/xray/premium
+    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
     touch /etc/xray/domain
     mkdir -p /var/log/xray
     chown www-data.www-data /var/log/xray
