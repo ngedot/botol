@@ -1,12 +1,12 @@
 
 ### Update & Upgrade 
 ```
-sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt-get update -y && apt-get upgrade -y && reboot
+sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt update -y && apt upgrade -y && reboot
 
 ```
 ### INSTALL SCRIPT 
 ```
-sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt install -y && apt-get update -y && apt-get upgrade -y  && apt install curl -y &&  apt install lolcat -y && gem install lolcat && wget -q https://raw.githubusercontent.com/ngedot/botol/main/install.sh && chmod +x install.sh && ./install.sh
+sysctl -w net.ipv6.conf.all.disable_ipv6=1 && sysctl -w net.ipv6.conf.default.disable_ipv6=1 && apt install -y && apt update -y && apt upgrade -y  && apt install curl -y &&  apt install lolcat -y && gem install lolcat && wget -q https://raw.githubusercontent.com/ngedot/botol/main/install.sh && chmod +x install.sh && ./install.sh
 
 ```
 ### AKTIFKAN SLOWDNS
