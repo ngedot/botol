@@ -36,8 +36,8 @@ clear;clear;clear
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo -e "  Welcome To SCRIPT ${YELLOW}(${NC}${green} Stable Edition ${NC}${YELLOW})${NC}"
 echo -e " This Will Quick Setup VPN Server On Your Server"
-echo -e "  Author : ${green} AMGEEKZ ® ${NC}${YELLOW}(${NC} ${green} AMGEEKZ ${NC}${YELLOW})${NC}"
-echo -e " © Recode By My Self AMGEEKZ${YELLOW}(${NC} 2023 ${YELLOW})${NC}"
+echo -e "  Author : ${green} Group ® ${NC}${YELLOW}(${NC} ${green} Telegram ${NC}${YELLOW})${NC}"
+echo -e " © https://t.me/ServerPremiumVIP${YELLOW}(${NC} 2024 ${YELLOW})${NC}"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
 sleep 2
@@ -549,7 +549,7 @@ print_success "Password SSH"
 function udp_mini(){
 clear
 print_install "Memasang Service Limit Quota"
-wget raw.githubusercontent.com/amgeekz/vip/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
+wget raw.githubusercontent.com/ngedot/botol/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
 
 cd
 wget -q -O /usr/bin/limit-ip "${REPO}limit/limit-ip"
