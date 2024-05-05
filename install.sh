@@ -189,7 +189,7 @@ print_install "Membuat direktori xray"
     curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
     curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
     curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
-    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/ssh/isp
+    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
     touch /etc/xray/domain
     mkdir -p /var/log/xray
     chown www-data.www-data /var/log/xray
