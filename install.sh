@@ -185,11 +185,11 @@ function is_root() {
 # Buat direktori xray
 print_install "Membuat direktori xray"
     mkdir -p /etc/xray
-    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/ssh/ipvps
-    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/ssh/city
-    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/ssh/timezone
+    curl -s https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi > /etc/xray/premium
+    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
+    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
+    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
     curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/ssh/isp
-    curl -s ifconfig.me > /etc/xray/ipvps
     touch /etc/xray/domain
     mkdir -p /var/log/xray
     chown www-data.www-data /var/log/xray
@@ -438,8 +438,6 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
     
     # Settings UP Nginix Server
     clear
-    curl -s ipinfo.io/city >>/etc/xray/city
-    curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
     print_install "Memasang Konfigurasi Packet"
     wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
     wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
