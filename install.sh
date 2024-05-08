@@ -879,20 +879,20 @@ function menu(){
 }
 
 # Membaut Default Menu 
-function profile(){
-clear
-    cat >/root/.profile <<EOF
+#function profile(){
+#clear
+#    cat >/root/.profile <<EOF
 # ~/.profile: executed by Bourne-compatible login shells.
-if [ "$BASH" ]; then
-    if [ -f ~/.bashrc ]; then
-        . ~/.bashrc
-    fi
-fi
-mesg n || true
-pkill menu
-menu
-pkill menu
-EOF
+#if [ "$BASH" ]; then
+#    if [ -f ~/.bashrc ]; then
+#        . ~/.bashrc
+#    fi
+#fi
+#mesg n || true
+#pkill menu
+#menu
+#pkill menu
+#EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
