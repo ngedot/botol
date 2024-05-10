@@ -889,9 +889,7 @@ function menu(){
 #    fi
 #fi
 #mesg n || true
-#pkill menu
 #menu
-#pkill menu
 #EOF
 
 cat >/etc/cron.d/xp_all <<-END
