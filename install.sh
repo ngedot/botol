@@ -434,7 +434,7 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
     #chmod +x /usr/local/bin/xray
     domain=$(cat /etc/xray/domain)
     IPVS=$(cat /etc/xray/ipvps)
-    print_success "Core Xray 1.8.11 Latest Version"
+    print_success "Core Xray 1.8.13 Latest Version"
     
     # Settings UP Nginix Server
     clear
