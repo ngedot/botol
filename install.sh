@@ -879,7 +879,7 @@ function menu(){
 }
 
 # Membaut Default Menu 
-#function profile(){
+function profile(){
 #clear
 #    cat >/root/.profile <<EOF
 # ~/.profile: executed by Bourne-compatible login shells.
