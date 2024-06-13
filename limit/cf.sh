@@ -2,11 +2,11 @@
 MYIP=$(wget -qO- icanhazip.com);
 apt install jq curl -y
 #read -p "Masukan Domain (contoh : Dragon)" domen
-DOMAIN=amgeekz.tech
+DOMAIN=sshvpn.top
 sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
-dns=${sub}.amgeekz.tech
-CF_ID=inodsanjaya1998@gmail.com
-CF_KEY=c2dd68b68b4b6cdb41823d085f70a86c1545c
+dns=${sub}.sshvpn.top
+CF_ID=erfancloudflare@gmail.com
+CF_KEY=d66bf10bead0f6f207257110f07aba66cc39b
 set -euo pipefail
 IP=$(wget -qO- icanhazip.com);
 echo "Updating DNS for ${dns}..."
