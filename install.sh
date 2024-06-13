@@ -268,7 +268,7 @@ function base_package() {
     apt install figlet -y
     apt update -y
     ##apt upgrade -y
-    apt dist-upgrade -y
+    #apt dist-upgrade -y
     systemctl enable chronyd
     systemctl restart chronyd
     systemctl enable chrony
