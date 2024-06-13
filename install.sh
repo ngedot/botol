@@ -1,7 +1,7 @@
 #!/bin/bash
 ### Color
 apt update -y
-apt upgrade -y
+##apt upgrade -y
 apt install lolcat -y
 apt install wondershaper -y
 Green="\e[92;1m"
@@ -267,8 +267,8 @@ function base_package() {
     apt install zip pwgen openssl netcat socat cron bash-completion -y
     apt install figlet -y
     apt update -y
-    apt upgrade -y
-    apt dist-upgrade -y
+    ##apt upgrade -y
+    #apt dist-upgrade -y
     systemctl enable chronyd
     systemctl restart chronyd
     systemctl enable chrony
