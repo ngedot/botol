@@ -3,7 +3,8 @@ MYIP=$(wget -qO- icanhazip.com);
 apt install jq curl -y
 #read -p "Masukan Domain (contoh : Dragon)" domen
 DOMAIN=sshvpn.top
-sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
+#sub=$(</dev/urandom tr -dc a-z0-9 | head -c5)
+sub=id6
 dns=${sub}.sshvpn.top
 CF_ID=erfancloudflare@gmail.com
 CF_KEY=d66bf10bead0f6f207257110f07aba66cc39b
