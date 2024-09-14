@@ -1,7 +1,7 @@
 #!/bin/bash
 ### Color
-apt update -y
 apt upgrade -y
+apt update -y
 apt install lolcat -y
 apt install wondershaper -y
 Green="\e[92;1m"
@@ -19,8 +19,8 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIMES="10"
-CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
-KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+CHATID="1989038292"
+KEY="6761110297:AAGgX5M9NPp9DNf-ZZ9QmOkb4OChqJqbRe8"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 # ===================
 clear
@@ -36,8 +36,8 @@ clear;clear;clear
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo -e "  Welcome To SCRIPT ${YELLOW}(${NC}${green} Stable Edition ${NC}${YELLOW})${NC}"
 echo -e " This Will Quick Setup VPN Server On Your Server"
-echo -e "  Author : ${green} VIP ® ${NC}${YELLOW}(${NC} ${green} VIP ${NC}${YELLOW})${NC}"
-echo -e " © Recode By My Self VIP${YELLOW}(${NC} 2023 ${YELLOW})${NC}"
+echo -e "  Author : ${green} AMGEEKZ ® ${NC}${YELLOW}(${NC} ${green} AMGEEKZ ${NC}${YELLOW})${NC}"
+echo -e " © Recode By My Self AMGEEKZ${YELLOW}(${NC} 2023 ${YELLOW})${NC}"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
 sleep 2
@@ -97,12 +97,12 @@ clear
 #########################
 # USERNAME
 rm -f /usr/bin/user
-username=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
+username=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
 echo "$username" >/usr/bin/user
 # validity
 rm -f /usr/bin/e
 today=`date -d "0 days" +"%Y-%m-%d"`
-valid=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
+valid=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
 echo "$valid" >/usr/bin/e
 # DETAIL ORDER
 username=$(cat /usr/bin/user)
@@ -130,8 +130,8 @@ sts="${Error}"
 echo -e " $BLUE╭──────────────────────────────────────────────────────────╮${NC}"
 echo -e " $BLUE│$NC$RED    IP address not authorized by admin $NC"
 echo -e " $BLUE│$NC$RED    Please contact admin to rent this script $NC"
-echo -e " $BLUE│$NC$r • $NC$WHITE Whatsapp :$NC $GREEN 62818776240$NC"
-echo -e " $BLUE│$NC$r • $NC$WHITE Telegram :$NC $GREEN ServerPremiumVIP$NC"
+echo -e " $BLUE│$NC$r • $NC$WHITE Whatsapp :$NC $GREEN 6285649455626$NC"
+echo -e " $BLUE│$NC$r • $NC$WHITE Telegram :$NC $GREEN amgeekzssh$NC"
 echo -e " $BLUE╰──────────────────────────────────────────────────────────╯${NC}"
 sleep 3
 exit 1
@@ -141,7 +141,7 @@ fi
 echo -e "\e[32mloading...\e[0m"
 clear
 # REPO    
-    REPO="https://raw.githubusercontent.com/ngedot/botol/master/"
+    REPO="https://raw.githubusercontent.com/amgeekz/vip/master/"
 
 ####
 start=$(date +%s)
@@ -185,11 +185,7 @@ function is_root() {
 # Buat direktori xray
 print_install "Membuat direktori xray"
     mkdir -p /etc/xray
-    curl -s https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi > /etc/xray/premium
-    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
-    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
-    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
-    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
+    curl -s ifconfig.me > /etc/xray/ipvps
     touch /etc/xray/domain
     mkdir -p /var/log/xray
     chown www-data.www-data /var/log/xray
@@ -225,8 +221,8 @@ function first_setup(){
     echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     sudo apt update -y
     apt-get install --no-install-recommends software-properties-common
-    add-apt-repository ppa:vbernat/haproxy-2.6 -y
-    apt-get -y install haproxy=2.6.\*
+    add-apt-repository ppa:vbernat/haproxy-3.1 -y
+    apt-get -y install haproxy=3.1.\*
 elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
     echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     curl https://haproxy.debian.net/bernat.debian.org.gpg |
@@ -249,7 +245,7 @@ function nginx_install() {
     if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
         print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         # // sudo add-apt-repository ppa:nginx/stable -y 
-        apt-get install nginx -y 
+        sudo apt-get install nginx -y 
     elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
         print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         apt -y install nginx 
@@ -268,7 +264,7 @@ function base_package() {
     apt install figlet -y
     apt update -y
     apt upgrade -y
-    #apt dist-upgrade -y
+    apt dist-upgrade -y
     systemctl enable chronyd
     systemctl restart chronyd
     systemctl enable chrony
@@ -278,15 +274,15 @@ function base_package() {
     apt install ntpdate -y
     ntpdate pool.ntp.org
     apt install sudo -y
-    apt-get clean all
-    apt-get autoremove -y
-    apt-get install -y debconf-utils
-    apt-get remove --purge exim4 -y
-    apt-get remove --purge ufw firewalld -y
-    apt-get install -y --no-install-recommends software-properties-common
+    sudo apt-get clean all
+    sudo apt-get autoremove -y
+    sudo apt-get install -y debconf-utils
+    sudo apt-get remove --purge exim4 -y
+    sudo apt-get remove --purge ufw firewalld -y
+    sudo apt-get install -y --no-install-recommends software-properties-common
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
+    sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
     print_success "Packet Yang Dibutuhkan"
     
 }
@@ -324,8 +320,8 @@ clear
 clear
 #GANTI PASSWORD DEFAULT
 function restart_system() {
-    USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
-    EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
+    USRSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
+    EXPSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
     DATEVPS=$(date +'%d/%m/%Y')
     ISP=$(cat /etc/xray/isp)
     TIMEZONE=$(printf '%(%H:%M:%S)T')
@@ -416,7 +412,7 @@ rm -rf /etc/vmess/.vmess.db
 #Instal Xray
 function install_xray() {
 clear
-    print_install "Core Xray 1.8.13 Latest Version"
+    print_install "Core Xray 1.8.1 Latest Version"
     # install xray
     #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
     domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
@@ -425,7 +421,7 @@ clear
     # / / Ambil Xray Core Version Terbaru
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
 #bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.13
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.4
  
     # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
@@ -434,10 +430,12 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
     #chmod +x /usr/local/bin/xray
     domain=$(cat /etc/xray/domain)
     IPVS=$(cat /etc/xray/ipvps)
-    print_success "Core Xray 1.8.13 Latest Version"
+    print_success "Core Xray 1.8.1 Latest Version"
     
     # Settings UP Nginix Server
     clear
+    curl -s ipinfo.io/city >>/etc/xray/city
+    curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
     print_install "Memasang Konfigurasi Packet"
     wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
     wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
@@ -551,7 +549,7 @@ print_success "Password SSH"
 function udp_mini(){
 clear
 print_install "Memasang Service Limit Quota"
-wget raw.githubusercontent.com/ngedot/botol/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
+wget raw.githubusercontent.com/amgeekz/vip/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
 
 cd
 wget -q -O /usr/bin/limit-ip "${REPO}limit/limit-ip"
@@ -679,9 +677,9 @@ print_install "Menginstall Vnstat"
 apt -y install vnstat > /dev/null 2>&1
 /etc/init.d/vnstat restart
 apt -y install libsqlite3-dev > /dev/null 2>&1
-wget https://humdi.net/vnstat/vnstat-2.6.tar.gz
-tar zxvf vnstat-2.6.tar.gz
-cd vnstat-2.6
+wget https://humdi.net/vnstat/vnstat-2.12.tar.gz
+tar zxvf vnstat-2.12.tar.gz
+cd vnstat-2.12
 ./configure --prefix=/usr --sysconfdir=/etc && make && make install
 cd
 vnstat -u -i $NET
@@ -690,8 +688,8 @@ chown vnstat:vnstat /var/lib/vnstat -R
 systemctl enable vnstat
 /etc/init.d/vnstat restart
 /etc/init.d/vnstat status
-rm -f /root/vnstat-2.6.tar.gz
-rm -rf /root/vnstat-2.6
+rm -f /root/vnstat-2.12.tar.gz
+rm -rf /root/vnstat-2.12
 print_success "Vnstat"
 }
 
@@ -730,9 +728,9 @@ account default
 host smtp.gmail.com
 port 587
 auth on
-user serverkubackup@gmail.com
-from serverkubackup@gmail.com
-password serverkubackup 2023 
+user oceantestdigital@gmail.com
+from oceantestdigital@gmail.com
+password jokerman77 
 logfile ~/.msmtp.log
 EOF
 chown -R www-data:www-data /etc/msmtprc
@@ -741,39 +739,38 @@ print_success "Backup Server"
 }
 
 clear
-function first_setup(){
-    timedatectl set-timezone Asia/Jakarta
-    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
-    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    print_success "Directory Xray"
-    if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-    echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    sudo apt update -y
-    apt-get install --no-install-recommends software-properties-common
-    add-apt-repository ppa:vbernat/haproxy-2.0 -y
-    apt-get -y install haproxy=2.0.\*
-elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-    echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    curl https://haproxy.debian.net/bernat.debian.org.gpg |
-        gpg --dearmor >/usr/share/keyrings/haproxy.debian.net.gpg
-    echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" \
-        http://haproxy.debian.net buster-backports-1.8 main \
-        >/etc/apt/sources.list.d/haproxy.list
-    sudo apt-get update
-    apt-get -y install haproxy=1.8.\*
-else
-    echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
-    exit 1
-fi
+function ins_swab(){
+clear
+print_install "Memasang Swap 1 G"
+gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+    gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+    curl -sL "$gotop_link" -o /tmp/gotop.deb
+    dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+    
+        # > Buat swap sebesar 1G
+    dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+    mkswap /swapfile
+    chown root:root /swapfile
+    chmod 0600 /swapfile >/dev/null 2>&1
+    swapon /swapfile >/dev/null 2>&1
+    sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
+
+    # > Singkronisasi jam
+    chronyd -q 'server 0.id.pool.ntp.org iburst'
+    chronyc sourcestats -v
+    chronyc tracking -v
+    
+    wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
+print_success "Swap 1 G"
 }
 
 function ins_Fail2ban(){
 clear
 print_install "Menginstall Fail2ban"
-apt -y install fail2ban > /dev/null 2>&1
-sudo systemctl enable --now fail2ban
-/etc/init.d/fail2ban restart
-/etc/init.d/fail2ban status
+#apt -y install fail2ban > /dev/null 2>&1
+#sudo systemctl enable --now fail2ban
+#/etc/init.d/fail2ban restart
+#/etc/init.d/fail2ban status
 
 # Instal DDOS Flate
 if [ -d '/usr/local/ddos' ]; then
@@ -881,17 +878,17 @@ function menu(){
 
 # Membaut Default Menu 
 function profile(){
-#clear
-#    cat >/root/.profile <<EOF
+clear
+    cat >/root/.profile <<EOF
 # ~/.profile: executed by Bourne-compatible login shells.
-#if [ "$BASH" ]; then
-#    if [ -f ~/.bashrc ]; then
-#        . ~/.bashrc
-#    fi
-#fi
-#mesg n || true
-#menu
-#EOF
+if [ "$BASH" ]; then
+    if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+fi
+mesg n || true
+menu
+EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
@@ -903,7 +900,7 @@ cat >/etc/cron.d/xp_all <<-END
 		PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 		*/20 * * * * root /usr/local/sbin/clearlog
 		END
-#    chmod 644 /root/.profile
+    chmod 644 /root/.profile
 	
     cat >/etc/cron.d/daily_reboot <<-END
 		SHELL=/bin/sh
