@@ -213,31 +213,44 @@ print_install "Membuat direktori xray"
     export IP=$( curl -s https://ipinfo.io/ip/ )
 
 # Change Environment System
-function first_setup(){
+function first_setup() {
     timedatectl set-timezone Asia/Jakarta
+
+    # Setup iptables-persistent
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+
     print_success "Directory Xray"
-    if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-    echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    apt update -y
-    apt-get install --no-install-recommends software-properties-common
-    add-apt-repository ppa:vbernat/haproxy-3.1 -y
-    apt-get -y install haproxy=3.1.\*
-elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-    echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    curl https://haproxy.debian.net/bernat.debian.org.gpg |
-        gpg --dearmor >/usr/share/keyrings/haproxy.debian.net.gpg
-    echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" \
-        http://haproxy.debian.net buster-backports-2.6 main \
-        >/etc/apt/sources.list.d/haproxy.list
-    apt-get update
-    apt-get -y install haproxy=2.6.\*
-else
-    echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
-    exit 1
-fi
+
+    # Get OS ID and Version
+    local os_id=$(grep -w ID /etc/os-release | cut -d= -f2 | tr -d '"')
+    local os_name=$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
+
+    if [[ "$os_id" == "ubuntu" ]]; then
+        echo "Setup Dependencies for OS: $os_name"
+        apt update -y
+        apt install --no-install-recommends -y software-properties-common
+
+        # Add PPA for HAProxy
+        add-apt-repository ppa:vbernat/haproxy-3.1 -y
+
+        # Install HAProxy
+        apt install -y haproxy=3.1.*
+    elif [[ "$os_id" == "debian" ]]; then
+        echo "Setup Dependencies for OS: $os_name"
+        
+        # Add GPG key and repository for HAProxy
+        curl -fsSL https://haproxy.debian.net/bernat.debian.org.gpg | gpg --dearmor > /usr/share/keyrings/haproxy.debian.net.gpg
+        echo "deb [signed-by=/usr/share/keyrings/haproxy.debian.net.gpg] http://haproxy.debian.net buster-backports-2.6 main" | tee /etc/apt/sources.list.d/haproxy.list
+        
+        apt update
+        apt install -y haproxy=2.6.*
+    else
+        echo "Your OS is not supported: $os_name"
+        exit 1
+    fi
 }
+
 
 # GEO PROJECT
 clear
@@ -260,33 +273,98 @@ function nginx_install() {
 function base_package() {
     clear
     ########
-    print_install "Menginstall Packet Yang Dibutuhkan"
-    apt install zip pwgen openssl netcat socat cron bash-completion -y
-    apt install figlet -y
+    print_install "Menginstall Paket Yang Dibutuhkan"
+
+    # Update and Upgrade
     apt update -y
     apt upgrade -y
     apt dist-upgrade -y
-    systemctl enable chronyd
-    systemctl restart chronyd
+
+    # Install essential packages
+    apt install -y \
+        zip \
+        pwgen \
+        openssl \
+        netcat \
+        socat \
+        cron \
+        bash-completion \
+        figlet \
+        ntpdate \
+        sudo \
+        debconf-utils \
+        vnstat \
+        libnss3-dev \
+        libnspr4-dev \
+        pkg-config \
+        libpam0g-dev \
+        libcap-ng-dev \
+        libcap-ng-utils \
+        libselinux1-dev \
+        libcurl4-nss-dev \
+        flex \
+        bison \
+        make \
+        libnss3-tools \
+        libevent-dev \
+        bc \
+        rsyslog \
+        dos2unix \
+        zlib1g-dev \
+        libssl-dev \
+        libsqlite3-dev \
+        sed \
+        dirmngr \
+        libxml-parser-perl \
+        build-essential \
+        gcc \
+        g++ \
+        python \
+        htop \
+        lsof \
+        tar \
+        wget \
+        curl \
+        ruby \
+        unzip \
+        p7zip-full \
+        python3-pip \
+        libc6 \
+        util-linux \
+        msmtp-mta \
+        ca-certificates \
+        bsd-mailx \
+        iptables \
+        iptables-persistent \
+        netfilter-persistent \
+        net-tools \
+        gnupg \
+        gnupg2 \
+        lsb-release \
+        shc \
+        cmake \
+        git \
+        screen \
+        xz-utils \
+        apt-transport-https \
+        dnsutils \
+        jq \
+        openvpn \
+        easy-rsa
+
+    # Enable and restart chrony service
     systemctl enable chrony
     systemctl restart chrony
     chronyc sourcestats -v
     chronyc tracking -v
-    apt install ntpdate -y
-    ntpdate pool.ntp.org
-    apt install sudo -y
-    apt-get clean all
-    apt-get autoremove -y
-    apt-get install -y debconf-utils
-    apt-get remove --purge exim4 -y
-    apt-get remove --purge ufw firewalld -y
-    apt-get install -y --no-install-recommends software-properties-common
-    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
-    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
-    print_success "Packet Yang Dibutuhkan"
-    
+
+    # Clean up
+    apt autoremove -y
+    apt clean
+
+    print_success "Paket Yang Dibutuhkan"
 }
+
 clear
 # Fungsi input domain
 function pasang_domain() {
@@ -321,8 +399,8 @@ clear
 clear
 #GANTI PASSWORD DEFAULT
 function restart_system() {
-    USRSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
-    EXPSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
+    USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
+    EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
     DATEVPS=$(date +'%d/%m/%Y')
     ISP=$(cat /etc/xray/isp)
     TIMEZONE=$(printf '%(%H:%M:%S)T')
@@ -347,54 +425,67 @@ function restart_system() {
 
 }
 clear
+
 # Pasang SSL
 function pasang_ssl() {
-clear
-print_install "Memasang SSL Pada Domain"
+    clear
+    print_install "Memasang SSL Pada Domain"
+    
+    # Hapus sertifikat lama jika ada
     rm -rf /etc/xray/xray.key
     rm -rf /etc/xray/xray.crt
+    
+    # Ambil domain dari file
     domain=$(cat /root/domain)
-    STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
-    rm -rf /root/.acme.sh
-    mkdir /root/.acme.sh
-    systemctl stop $STOPWEBSERVER
+    
+    # Temukan dan hentikan server web yang mungkin berjalan
+    STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
+    if [ -n "$STOPWEBSERVER" ]; then
+        systemctl stop "$STOPWEBSERVER"
+    fi
+    
+    # Hentikan nginx jika berjalan
     systemctl stop nginx
-    curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
+    
+    # Siapkan ACME
+    rm -rf /root/.acme.sh
+    mkdir -p /root/.acme.sh
+    curl -fsSL https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
     chmod +x /root/.acme.sh/acme.sh
+    
+    # Instal dan perbarui ACME
     /root/.acme.sh/acme.sh --upgrade --auto-upgrade
     /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-    /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
-    ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
-    chmod 777 /etc/xray/xray.key
+    /root/.acme.sh/acme.sh --issue -d "$domain" --standalone -k ec-256
+    /root/.acme.sh/acme.sh --installcert -d "$domain" \
+        --fullchainpath /etc/xray/xray.crt \
+        --keypath /etc/xray/xray.key --ecc
+    
+    # Atur izin untuk sertifikat
+    chmod 600 /etc/xray/xray.key
+    
     print_success "SSL Certificate"
 }
 
 function make_folder_xray() {
-rm -rf /etc/vmess/.vmess.db
-    rm -rf /etc/vless/.vless.db
-    rm -rf /etc/trojan/.trojan.db
-    rm -rf /etc/shadowsocks/.shadowsocks.db
-    rm -rf /etc/ssh/.ssh.db
-    rm -rf /etc/bot/.bot.db
-    mkdir -p /etc/bot
-    mkdir -p /etc/xray
-    mkdir -p /etc/vmess
-    mkdir -p /etc/vless
-    mkdir -p /etc/trojan
-    mkdir -p /etc/shadowsocks
-    mkdir -p /etc/ssh
-    mkdir -p /usr/bin/xray/
-    mkdir -p /var/log/xray/
-    mkdir -p /var/www/html
-    mkdir -p /etc/kyt/limit/vmess/ip
-    mkdir -p /etc/kyt/limit/vless/ip
-    mkdir -p /etc/kyt/limit/trojan/ip
-    mkdir -p /etc/kyt/limit/ssh/ip
-    mkdir -p /etc/limit/vmess
-    mkdir -p /etc/limit/vless
-    mkdir -p /etc/limit/trojan
-    mkdir -p /etc/limit/ssh
-    chmod +x /var/log/xray
+    # Hapus database lama jika ada
+    rm -f /etc/vmess/.vmess.db
+    rm -f /etc/vless/.vless.db
+    rm -f /etc/trojan/.trojan.db
+    rm -f /etc/shadowsocks/.shadowsocks.db
+    rm -f /etc/ssh/.ssh.db
+    rm -f /etc/bot/.bot.db
+    
+    # Buat folder yang diperlukan
+    mkdir -p /etc/bot /etc/xray /etc/vmess /etc/vless /etc/trojan /etc/shadowsocks /etc/ssh
+    mkdir -p /usr/bin/xray /var/log/xray /var/www/html
+    mkdir -p /etc/kyt/limit/vmess/ip /etc/kyt/limit/vless/ip /etc/kyt/limit/trojan/ip /etc/kyt/limit/ssh/ip
+    mkdir -p /etc/limit/vmess /etc/limit/vless /etc/limit/trojan /etc/limit/ssh
+    
+    # Atur izin
+    chmod 755 /var/log/xray
+    
+    # Buat file yang diperlukan
     touch /etc/xray/domain
     touch /var/log/xray/access.log
     touch /var/log/xray/error.log
@@ -404,35 +495,44 @@ rm -rf /etc/vmess/.vmess.db
     touch /etc/shadowsocks/.shadowsocks.db
     touch /etc/ssh/.ssh.db
     touch /etc/bot/.bot.db
-    echo "& plughin Account" >>/etc/vmess/.vmess.db
-    echo "& plughin Account" >>/etc/vless/.vless.db
-    echo "& plughin Account" >>/etc/trojan/.trojan.db
-    echo "& plughin Account" >>/etc/shadowsocks/.shadowsocks.db
-    echo "& plughin Account" >>/etc/ssh/.ssh.db
-    }
-#Instal Xray
-function install_xray() {
-clear
-    print_install "Core Xray 1.8.1 Latest Version"
-    # install xray
-    #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
-    domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
-    chown www-data.www-data $domainSock_dir
     
-    # / / Ambil Xray Core Version Terbaru
-latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-#bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.4
- 
-    # // Ambil Config Server
+    # Tambahkan teks ke database
+    echo "& plughin Account" >> /etc/vmess/.vmess.db
+    echo "& plughin Account" >> /etc/vless/.vless.db
+    echo "& plughin Account" >> /etc/trojan/.trojan.db
+    echo "& plughin Account" >> /etc/shadowsocks/.shadowsocks.db
+    echo "& plughin Account" >> /etc/ssh/.ssh.db
+}
+
+# Install Xray
+function install_xray() {
+    clear
+    print_install "Core Xray Latest Version"
+    
+    # Direktori untuk Xray socket
+    domainSock_dir="/run/xray"
+    if [ ! -d "$domainSock_dir" ]; then
+        mkdir -p "$domainSock_dir"
+        chown www-data:www-data "$domainSock_dir"
+    fi
+    
+    # Dapatkan versi terbaru dari Xray Core
+    latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep tag_name | sed -E 's/.*"v(.*)".*/\1/')"
+    
+    # Unduh dan Instal Xray Core
+    bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version "$latest_version"
+    
+    # Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
-    #wget -O /usr/local/bin/xray "${REPO}xray/xray.linux.64bit" >/dev/null 2>&1
     wget -O /etc/systemd/system/runn.service "${REPO}limit/runn.service" >/dev/null 2>&1
-    #chmod +x /usr/local/bin/xray
+    
+    # Konfigurasi Xray
     domain=$(cat /etc/xray/domain)
     IPVS=$(cat /etc/xray/ipvps)
-    print_success "Core Xray 1.8.1 Latest Version"
     
+    print_success "Core Xray $latest_version Installed Successfully"
+}
+
     # Settings UP Nginix Server
     clear
     curl -s ipinfo.io/city >>/etc/xray/city
@@ -729,9 +829,9 @@ account default
 host smtp.gmail.com
 port 587
 auth on
-user oceantestdigital@gmail.com
-from oceantestdigital@gmail.com
-password jokerman77 
+user serverkubackup@gmail.com
+from serverkubackup@gmail.com
+password serverkubackup 2023 
 logfile ~/.msmtp.log
 EOF
 chown -R www-data:www-data /etc/msmtprc
@@ -742,19 +842,19 @@ print_success "Backup Server"
 clear
 function ins_swab(){
 clear
-print_install "Memasang Swap 1 G"
-gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-    gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
-    curl -sL "$gotop_link" -o /tmp/gotop.deb
-    dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+# print_install "Memasang Swap 1 G"
+# gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+#     gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+#     curl -sL "$gotop_link" -o /tmp/gotop.deb
+#     dpkg -i /tmp/gotop.deb >/dev/null 2>&1
     
-        # > Buat swap sebesar 1G
-    dd if=/dev/zero of=/swapfile bs=1024 count=1048576
-    mkswap /swapfile
-    chown root:root /swapfile
-    chmod 0600 /swapfile >/dev/null 2>&1
-    swapon /swapfile >/dev/null 2>&1
-    sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
+#         # > Buat swap sebesar 1G
+#     dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+#     mkswap /swapfile
+#     chown root:root /swapfile
+#     chmod 0600 /swapfile >/dev/null 2>&1
+#     swapon /swapfile >/dev/null 2>&1
+#     sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
 
     # > Singkronisasi jam
     chronyd -q 'server 0.id.pool.ntp.org iburst'
@@ -768,10 +868,10 @@ print_success "Swap 1 G"
 function ins_Fail2ban(){
 clear
 print_install "Menginstall Fail2ban"
-#apt -y install fail2ban > /dev/null 2>&1
-#sudo systemctl enable --now fail2ban
-#/etc/init.d/fail2ban restart
-#/etc/init.d/fail2ban status
+apt -y install fail2ban > /dev/null 2>&1
+sudo systemctl enable --now fail2ban
+/etc/init.d/fail2ban restart
+/etc/init.d/fail2ban status
 
 # Instal DDOS Flate
 if [ -d '/usr/local/ddos' ]; then
@@ -877,19 +977,19 @@ function menu(){
     rm -rf menu.zip
 }
 
-# Membaut Default Menu 
-function profile(){
-clear
-    cat >/root/.profile <<EOF
-# ~/.profile: executed by Bourne-compatible login shells.
-if [ "$BASH" ]; then
-    if [ -f ~/.bashrc ]; then
-        . ~/.bashrc
-    fi
-fi
-mesg n || true
-menu
-EOF
+# # Membaut Default Menu 
+# function profile(){
+# clear
+#     cat >/root/.profile <<EOF
+# # ~/.profile: executed by Bourne-compatible login shells.
+# if [ "$BASH" ]; then
+#     if [ -f ~/.bashrc ]; then
+#         . ~/.bashrc
+#     fi
+# fi
+# mesg n || true
+# menu
+# EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
