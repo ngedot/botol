@@ -105,7 +105,7 @@ valid=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | 
 echo "$valid" >/usr/bin/e
 # DETAIL ORDER
 username=$(cat /usr/bin/user)
-oid=$(cat /usr/bin/ver)
+# oid=$(cat /usr/bin/ver)
 exp=$(cat /usr/bin/e)
 clear
 # CERTIFICATE STATUS
@@ -533,16 +533,50 @@ function install_xray() {
     print_success "Core Xray $latest_version Installed Successfully"
 }
 
-    # Settings UP Nginix Server
-    clear
-    curl -s ipinfo.io/city >>/etc/xray/city
-    curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
-    print_install "Memasang Konfigurasi Packet"
-    wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
-    wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
-    sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
-    sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
-    curl ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
+#!/bin/bash
+
+# Function to print messages with a timestamp
+print_install() {
+    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
+}
+
+# Settings UP Nginx Server
+clear
+
+# Ensure necessary directories and files exist
+mkdir -p /etc/xray
+mkdir -p /etc/haproxy
+mkdir -p /etc/nginx/conf.d
+
+# Fetch city and ISP information
+curl -s ipinfo.io/city > /etc/xray/city
+curl -s ipinfo.io/org | cut -d " " -f 2-10 > /etc/xray/isp
+
+# Print message
+print_install "Memasang Konfigurasi Packet"
+
+# Download configuration files
+wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
+wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
+
+# Replace placeholder in configuration files
+sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
+sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
+
+# Download and update main Nginx configuration
+curl -s ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
+
+# Optional: Restart services to apply changes
+if systemctl --quiet is-active nginx && systemctl --quiet is-active haproxy; then
+    print_install "Restarting Nginx and HAProxy services"
+    systemctl restart nginx
+    systemctl restart haproxy
+else
+    print_install "Nginx or HAProxy service is not running or systemctl not found"
+fi
+
+print_install "Configuration completed."
+
     
 cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
 
