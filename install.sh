@@ -180,37 +180,66 @@ function is_root() {
 
 }
 
-# Buat direktori xray
+## Function to print messages with a timestamp
+print_install() {
+    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
+}
+
+# Create xray directory and fetch system information
 print_install "Membuat direktori xray"
-    mkdir -p /etc/xray
-    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
-    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
-    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
-    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
-    touch /etc/xray/domain
-    mkdir -p /var/log/xray
-    chown www-data.www-data /var/log/xray
-    chmod +x /var/log/xray
-    touch /var/log/xray/access.log
-    touch /var/log/xray/error.log
-    mkdir -p /var/lib/kyt >/dev/null 2>&1
-    # // Ram Information
-    while IFS=":" read -r a b; do
+mkdir -p /etc/xray
+mkdir -p /var/log/xray
+mkdir -p /var/lib/kyt
+
+# Set permissions for log directory
+chown www-data:www-data /var/log/xray
+chmod 755 /var/log/xray
+
+# Fetch system and network information
+TOKEN="22bdf1094ea479"
+curl -s "https://ipinfo.io/ip/?token=${TOKEN}" > /etc/xray/ipvps
+curl -s "https://ipinfo.io/city?token=${TOKEN}" > /etc/xray/city
+curl -s "https://ipinfo.io/timezone?token=${TOKEN}" > /etc/xray/timezone
+curl -s "https://ipinfo.io/org?token=${TOKEN}" | cut -d " " -f 2-10 > /etc/xray/isp
+
+# Create empty files
+touch /etc/xray/domain
+touch /var/log/xray/access.log
+touch /var/log/xray/error.log
+
+# Collect RAM information
+mem_used=0
+mem_total=0
+while IFS=":" read -r a b; do
     case $a in
-        "MemTotal") ((mem_used+=${b/kB})); mem_total="${b/kB}" ;;
-        "Shmem") ((mem_used+=${b/kB}))  ;;
+        "MemTotal") ((mem_total+=${b/kB}));;
+        "Shmem") ((mem_used+=${b/kB}));;
         "MemFree" | "Buffers" | "Cached" | "SReclaimable")
-        mem_used="$((mem_used-=${b/kB}))"
+            mem_used="$((mem_used-=${b/kB}))"
     ;;
     esac
-    done < /proc/meminfo
-    Ram_Usage="$((mem_used / 1024))"
-    Ram_Total="$((mem_total / 1024))"
-    export tanggal=`date -d "0 days" +"%d-%m-%Y - %X" `
-    export OS_Name=$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME//g' | sed 's/=//g' | sed 's/"//g' )
-    export Kernel=$( uname -r )
-    export Arch=$( uname -m )
-    export IP=$( curl -s https://ipinfo.io/ip/ )
+done < /proc/meminfo
+
+Ram_Usage="$((mem_used / 1024))"
+Ram_Total="$((mem_total / 1024))"
+
+# Export system information
+export tanggal=$(date +"%d-%m-%Y - %X")
+export OS_Name=$(grep -w PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | sed 's/"//g')
+export Kernel=$(uname -r)
+export Arch=$(uname -m)
+export IP=$(curl -s https://ipinfo.io/ip/)
+
+# Print collected information
+print_install "System Information:"
+print_install "Date: $tanggal"
+print_install "OS: $OS_Name"
+print_install "Kernel: $Kernel"
+print_install "Architecture: $Arch"
+print_install "IP Address: $IP"
+print_install "RAM Usage: ${Ram_Usage}MB / ${Ram_Total}MB"
+
+print_install "Configuration completed."
 
 # Change Environment System
 function first_setup() {
@@ -232,10 +261,10 @@ function first_setup() {
         apt install --no-install-recommends -y software-properties-common
 
         # Add PPA for HAProxy
-        add-apt-repository ppa:vbernat/haproxy-3.1 -y
+        add-apt-repository ppa:vbernat/haproxy-3.0 -y
 
         # Install HAProxy
-        apt install -y haproxy=3.1.*
+        apt install -y haproxy=3.0.*
     elif [[ "$os_id" == "debian" ]]; then
         echo "Setup Dependencies for OS: $os_name"
         
@@ -533,7 +562,6 @@ function install_xray() {
     print_success "Core Xray $latest_version Installed Successfully"
 }
 
-#!/bin/bash
 
 # Function to print messages with a timestamp
 print_install() {
@@ -575,17 +603,86 @@ else
     print_install "Nginx or HAProxy service is not running or systemctl not found"
 fi
 
+
+# Function to print messages with a timestamp
+print_install() {
+    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
+}
+
+# Function to print success messages with a timestamp
+print_success() {
+    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
+}
+
+# Create necessary directories and fetch system information
+print_install "Membuat direktori xray"
+mkdir -p /etc/xray
+mkdir -p /var/log/xray
+mkdir -p /var/lib/kyt
+
+# Set permissions for log directory
+chown www-data:www-data /var/log/xray
+chmod 755 /var/log/xray
+
+# Fetch system and network information
+TOKEN="22bdf1094ea479"
+curl -s "https://ipinfo.io/ip/?token=${TOKEN}" > /etc/xray/ipvps
+curl -s "https://ipinfo.io/city?token=${TOKEN}" > /etc/xray/city
+curl -s "https://ipinfo.io/timezone?token=${TOKEN}" > /etc/xray/timezone
+curl -s "https://ipinfo.io/org?token=${TOKEN}" | cut -d " " -f 2-10 > /etc/xray/isp
+
+# Create empty files
+touch /etc/xray/domain
+touch /var/log/xray/access.log
+touch /var/log/xray/error.log
+
+# Collect RAM information
+mem_used=0
+mem_total=0
+while IFS=":" read -r a b; do
+    case $a in
+        "MemTotal") ((mem_total+=${b/kB}));;
+        "Shmem") ((mem_used+=${b/kB}));;
+        "MemFree" | "Buffers" | "Cached" | "SReclaimable")
+            mem_used="$((mem_used-=${b/kB}))"
+    ;;
+    esac
+done < /proc/meminfo
+
+Ram_Usage="$((mem_used / 1024))"
+Ram_Total="$((mem_total / 1024))"
+
+# Export system information
+export tanggal=$(date +"%d-%m-%Y - %X")
+export OS_Name=$(grep -w PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | sed 's/"//g')
+export Kernel=$(uname -r)
+export Arch=$(uname -m)
+export IP=$(curl -s https://ipinfo.io/ip/)
+
+# Print collected information
+print_install "System Information:"
+print_install "Date: $tanggal"
+print_install "OS: $OS_Name"
+print_install "Kernel: $Kernel"
+print_install "Architecture: $Arch"
+print_install "IP Address: $IP"
+print_install "RAM Usage: ${Ram_Usage}MB / ${Ram_Total}MB"
+
+# Configuration completion message
 print_install "Configuration completed."
 
-    
-cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
+# Combine certificates and keys into a single PEM file
+cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem > /dev/null
 
-    # > Set Permission
-    chmod +x /etc/systemd/system/runn.service
+# Set permissions for the service file
+chmod 644 /etc/systemd/system/xray.service
 
-    # > Create Service
-    rm -rf /etc/systemd/system/xray.service.d
-    cat >/etc/systemd/system/xray.service <<EOF
+# Create and configure the Xray systemd service
+print_install "Setting up Xray systemd service"
+rm -rf /etc/systemd/system/xray.service.d
+
+cat >/etc/systemd/system/xray.service <<EOF
+[Unit]
 Description=Xray Service
 Documentation=https://github.com
 After=network.target nss-lookup.target
@@ -603,10 +700,12 @@ LimitNOFILE=1000000
 
 [Install]
 WantedBy=multi-user.target
-
 EOF
-print_success "Konfigurasi Packet"
-}
+
+# Notify completion
+print_success "Xray service configuration completed and enabled."
+
+
 function ssh(){
 clear
 print_install "Memasang Password SSH"
@@ -1076,17 +1175,31 @@ systemctl restart netfilter-persistent
 exit 0
 EOF
 
-    chmod +x /etc/rc.local
-    
-    AUTOREB=$(cat /home/daily_reboot)
-    SETT=11
-    if [ $AUTOREB -gt $SETT ]; then
-        TIME_DATE="PM"
-    else
-        TIME_DATE="AM"
-    fi
-print_success "Menu Packet"
+# Function to print success messages with a timestamp
+print_success() {
+    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
 }
+
+# Make /etc/rc.local executable
+chmod +x /etc/rc.local
+
+# Read the reboot setting
+AUTOREB=$(cat /home/daily_reboot 2>/dev/null)
+SETT=11
+
+# Check if AUTOREB is greater than SETT
+if [ "$AUTOREB" -gt "$SETT" ]; then
+    TIME_DATE="PM"
+else
+    TIME_DATE="AM"
+fi
+
+# Print success message
+print_success "Menu Packet"
+
+# Optional: Print out the result of the time of day determination
+print_success "Current Time of Day: $TIME_DATE"
+
 
 # Restart layanan after install
 function enable_services(){
@@ -1149,3 +1262,4 @@ echo -e "${green} Script Successfull Installed"
 echo ""
 read -p "$( echo -e "Press ${YELLOW}[ ${NC}${YELLOW}Enter${NC} ${YELLOW}]${NC} For Reboot") "
 reboot
+
