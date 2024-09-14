@@ -36,7 +36,7 @@ clear;clear;clear
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo -e "  Welcome To SCRIPT ${YELLOW}(${NC}${green} Stable Edition ${NC}${YELLOW})${NC}"
 echo -e " This Will Quick Setup VPN Server On Your Server"
-echo -e " © Edited By My Self @erfanrinandaZ${YELLOW}(${NC} 2024 ${YELLOW})${NC}"
+echo -e " © Edited By My Self @erfanrinanda${YELLOW}(${NC} 2024 ${YELLOW})${NC}"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
 sleep 2
@@ -105,7 +105,7 @@ valid=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | 
 echo "$valid" >/usr/bin/e
 # DETAIL ORDER
 username=$(cat /usr/bin/user)
-# oid=$(cat /usr/bin/ver)
+oid=$(cat /usr/bin/ver)
 exp=$(cat /usr/bin/e)
 clear
 # CERTIFICATE STATUS
@@ -180,106 +180,61 @@ function is_root() {
 
 }
 
-## Function to print messages with a timestamp
-print_install() {
-    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
-}
-
-# Create xray directory and fetch system information
+# Buat direktori xray
 print_install "Membuat direktori xray"
-mkdir -p /etc/xray
-mkdir -p /var/log/xray
-mkdir -p /var/lib/kyt
-
-# Set permissions for log directory
-chown www-data:www-data /var/log/xray
-chmod 755 /var/log/xray
-
-# Fetch system and network information
-TOKEN="22bdf1094ea479"
-curl -s "https://ipinfo.io/ip/?token=${TOKEN}" > /etc/xray/ipvps
-curl -s "https://ipinfo.io/city?token=${TOKEN}" > /etc/xray/city
-curl -s "https://ipinfo.io/timezone?token=${TOKEN}" > /etc/xray/timezone
-curl -s "https://ipinfo.io/org?token=${TOKEN}" | cut -d " " -f 2-10 > /etc/xray/isp
-
-# Create empty files
-touch /etc/xray/domain
-touch /var/log/xray/access.log
-touch /var/log/xray/error.log
-
-# Collect RAM information
-mem_used=0
-mem_total=0
-while IFS=":" read -r a b; do
+    mkdir -p /etc/xray
+    curl -s ifconfig.me > /etc/xray/ipvps
+    touch /etc/xray/domain
+    mkdir -p /var/log/xray
+    chown www-data.www-data /var/log/xray
+    chmod +x /var/log/xray
+    touch /var/log/xray/access.log
+    touch /var/log/xray/error.log
+    mkdir -p /var/lib/kyt >/dev/null 2>&1
+    # // Ram Information
+    while IFS=":" read -r a b; do
     case $a in
-        "MemTotal") ((mem_total+=${b/kB}));;
-        "Shmem") ((mem_used+=${b/kB}));;
+        "MemTotal") ((mem_used+=${b/kB})); mem_total="${b/kB}" ;;
+        "Shmem") ((mem_used+=${b/kB}))  ;;
         "MemFree" | "Buffers" | "Cached" | "SReclaimable")
-            mem_used="$((mem_used-=${b/kB}))"
+        mem_used="$((mem_used-=${b/kB}))"
     ;;
     esac
-done < /proc/meminfo
-
-Ram_Usage="$((mem_used / 1024))"
-Ram_Total="$((mem_total / 1024))"
-
-# Export system information
-export tanggal=$(date +"%d-%m-%Y - %X")
-export OS_Name=$(grep -w PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | sed 's/"//g')
-export Kernel=$(uname -r)
-export Arch=$(uname -m)
-export IP=$(curl -s https://ipinfo.io/ip/)
-
-# Print collected information
-print_install "System Information:"
-print_install "Date: $tanggal"
-print_install "OS: $OS_Name"
-print_install "Kernel: $Kernel"
-print_install "Architecture: $Arch"
-print_install "IP Address: $IP"
-print_install "RAM Usage: ${Ram_Usage}MB / ${Ram_Total}MB"
-
-print_install "Configuration completed."
+    done < /proc/meminfo
+    Ram_Usage="$((mem_used / 1024))"
+    Ram_Total="$((mem_total / 1024))"
+    export tanggal=`date -d "0 days" +"%d-%m-%Y - %X" `
+    export OS_Name=$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME//g' | sed 's/=//g' | sed 's/"//g' )
+    export Kernel=$( uname -r )
+    export Arch=$( uname -m )
+    export IP=$( curl -s https://ipinfo.io/ip/ )
 
 # Change Environment System
-function first_setup() {
+function first_setup(){
     timedatectl set-timezone Asia/Jakarta
-
-    # Setup iptables-persistent
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-
     print_success "Directory Xray"
-
-    # Get OS ID and Version
-    local os_id=$(grep -w ID /etc/os-release | cut -d= -f2 | tr -d '"')
-    local os_name=$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
-
-    if [[ "$os_id" == "ubuntu" ]]; then
-        echo "Setup Dependencies for OS: $os_name"
-        apt update -y
-        apt install --no-install-recommends -y software-properties-common
-
-        # Add PPA for HAProxy
-        add-apt-repository ppa:vbernat/haproxy-3.0 -y
-
-        # Install HAProxy
-        apt install -y haproxy=3.0.*
-    elif [[ "$os_id" == "debian" ]]; then
-        echo "Setup Dependencies for OS: $os_name"
-        
-        # Add GPG key and repository for HAProxy
-        curl -fsSL https://haproxy.debian.net/bernat.debian.org.gpg | gpg --dearmor > /usr/share/keyrings/haproxy.debian.net.gpg
-        echo "deb [signed-by=/usr/share/keyrings/haproxy.debian.net.gpg] http://haproxy.debian.net buster-backports-2.6 main" | tee /etc/apt/sources.list.d/haproxy.list
-        
-        apt update
-        apt install -y haproxy=2.6.*
-    else
-        echo "Your OS is not supported: $os_name"
-        exit 1
-    fi
+    if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
+    echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
+    sudo apt update -y
+    apt-get install --no-install-recommends software-properties-common
+    add-apt-repository ppa:vbernat/haproxy-3.0 -y
+    apt-get -y install haproxy=3.0.\*
+elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
+    echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
+    curl https://haproxy.debian.net/bernat.debian.org.gpg |
+        gpg --dearmor >/usr/share/keyrings/haproxy.debian.net.gpg
+    echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" \
+        http://haproxy.debian.net buster-backports-2.6 main \
+        >/etc/apt/sources.list.d/haproxy.list
+    sudo apt-get update
+    apt-get -y install haproxy=2.6.\*
+else
+    echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
+    exit 1
+fi
 }
-
 
 # GEO PROJECT
 clear
@@ -288,7 +243,7 @@ function nginx_install() {
     if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
         print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         # // sudo add-apt-repository ppa:nginx/stable -y 
-        apt-get install nginx -y 
+        sudo apt-get install nginx -y 
     elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
         print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         apt -y install nginx 
@@ -302,98 +257,33 @@ function nginx_install() {
 function base_package() {
     clear
     ########
-    print_install "Menginstall Paket Yang Dibutuhkan"
-
-    # Update and Upgrade
+    print_install "Menginstall Packet Yang Dibutuhkan"
+    apt install zip pwgen openssl netcat socat cron bash-completion -y
+    apt install figlet -y
     apt update -y
     apt upgrade -y
     apt dist-upgrade -y
-
-    # Install essential packages
-    apt install -y \
-        zip \
-        pwgen \
-        openssl \
-        netcat \
-        socat \
-        cron \
-        bash-completion \
-        figlet \
-        ntpdate \
-        sudo \
-        debconf-utils \
-        vnstat \
-        libnss3-dev \
-        libnspr4-dev \
-        pkg-config \
-        libpam0g-dev \
-        libcap-ng-dev \
-        libcap-ng-utils \
-        libselinux1-dev \
-        libcurl4-nss-dev \
-        flex \
-        bison \
-        make \
-        libnss3-tools \
-        libevent-dev \
-        bc \
-        rsyslog \
-        dos2unix \
-        zlib1g-dev \
-        libssl-dev \
-        libsqlite3-dev \
-        sed \
-        dirmngr \
-        libxml-parser-perl \
-        build-essential \
-        gcc \
-        g++ \
-        python \
-        htop \
-        lsof \
-        tar \
-        wget \
-        curl \
-        ruby \
-        unzip \
-        p7zip-full \
-        python3-pip \
-        libc6 \
-        util-linux \
-        msmtp-mta \
-        ca-certificates \
-        bsd-mailx \
-        iptables \
-        iptables-persistent \
-        netfilter-persistent \
-        net-tools \
-        gnupg \
-        gnupg2 \
-        lsb-release \
-        shc \
-        cmake \
-        git \
-        screen \
-        xz-utils \
-        apt-transport-https \
-        dnsutils \
-        jq \
-        openvpn \
-        easy-rsa
-
-    # Enable and restart chrony service
+    systemctl enable chronyd
+    systemctl restart chronyd
     systemctl enable chrony
     systemctl restart chrony
     chronyc sourcestats -v
     chronyc tracking -v
-
-    # Clean up
-    apt autoremove -y
-    apt clean
-
-    print_success "Paket Yang Dibutuhkan"
+    apt install ntpdate -y
+    ntpdate pool.ntp.org
+    apt install sudo -y
+    sudo apt-get clean all
+    sudo apt-get autoremove -y
+    sudo apt-get install -y debconf-utils
+    sudo apt-get remove --purge exim4 -y
+    sudo apt-get remove --purge ufw firewalld -y
+    sudo apt-get install -y --no-install-recommends software-properties-common
+    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
+    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
+    sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
+    print_success "Packet Yang Dibutuhkan"
+    
 }
-
 clear
 # Fungsi input domain
 function pasang_domain() {
@@ -428,8 +318,8 @@ clear
 clear
 #GANTI PASSWORD DEFAULT
 function restart_system() {
-    USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
-    EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
+    USRSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
+    EXPSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
     DATEVPS=$(date +'%d/%m/%Y')
     ISP=$(cat /etc/xray/isp)
     TIMEZONE=$(printf '%(%H:%M:%S)T')
@@ -454,67 +344,54 @@ function restart_system() {
 
 }
 clear
-
 # Pasang SSL
 function pasang_ssl() {
-    clear
-    print_install "Memasang SSL Pada Domain"
-    
-    # Hapus sertifikat lama jika ada
+clear
+print_install "Memasang SSL Pada Domain"
     rm -rf /etc/xray/xray.key
     rm -rf /etc/xray/xray.crt
-    
-    # Ambil domain dari file
     domain=$(cat /root/domain)
-    
-    # Temukan dan hentikan server web yang mungkin berjalan
-    STOPWEBSERVER=$(lsof -i:80 | awk 'NR==2 {print $1}')
-    if [ -n "$STOPWEBSERVER" ]; then
-        systemctl stop "$STOPWEBSERVER"
-    fi
-    
-    # Hentikan nginx jika berjalan
-    systemctl stop nginx
-    
-    # Siapkan ACME
+    STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
     rm -rf /root/.acme.sh
-    mkdir -p /root/.acme.sh
-    curl -fsSL https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
+    mkdir /root/.acme.sh
+    systemctl stop $STOPWEBSERVER
+    systemctl stop nginx
+    curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
     chmod +x /root/.acme.sh/acme.sh
-    
-    # Instal dan perbarui ACME
     /root/.acme.sh/acme.sh --upgrade --auto-upgrade
     /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-    /root/.acme.sh/acme.sh --issue -d "$domain" --standalone -k ec-256
-    /root/.acme.sh/acme.sh --installcert -d "$domain" \
-        --fullchainpath /etc/xray/xray.crt \
-        --keypath /etc/xray/xray.key --ecc
-    
-    # Atur izin untuk sertifikat
-    chmod 600 /etc/xray/xray.key
-    
+    /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
+    ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
+    chmod 777 /etc/xray/xray.key
     print_success "SSL Certificate"
 }
 
 function make_folder_xray() {
-    # Hapus database lama jika ada
-    rm -f /etc/vmess/.vmess.db
-    rm -f /etc/vless/.vless.db
-    rm -f /etc/trojan/.trojan.db
-    rm -f /etc/shadowsocks/.shadowsocks.db
-    rm -f /etc/ssh/.ssh.db
-    rm -f /etc/bot/.bot.db
-    
-    # Buat folder yang diperlukan
-    mkdir -p /etc/bot /etc/xray /etc/vmess /etc/vless /etc/trojan /etc/shadowsocks /etc/ssh
-    mkdir -p /usr/bin/xray /var/log/xray /var/www/html
-    mkdir -p /etc/kyt/limit/vmess/ip /etc/kyt/limit/vless/ip /etc/kyt/limit/trojan/ip /etc/kyt/limit/ssh/ip
-    mkdir -p /etc/limit/vmess /etc/limit/vless /etc/limit/trojan /etc/limit/ssh
-    
-    # Atur izin
-    chmod 755 /var/log/xray
-    
-    # Buat file yang diperlukan
+rm -rf /etc/vmess/.vmess.db
+    rm -rf /etc/vless/.vless.db
+    rm -rf /etc/trojan/.trojan.db
+    rm -rf /etc/shadowsocks/.shadowsocks.db
+    rm -rf /etc/ssh/.ssh.db
+    rm -rf /etc/bot/.bot.db
+    mkdir -p /etc/bot
+    mkdir -p /etc/xray
+    mkdir -p /etc/vmess
+    mkdir -p /etc/vless
+    mkdir -p /etc/trojan
+    mkdir -p /etc/shadowsocks
+    mkdir -p /etc/ssh
+    mkdir -p /usr/bin/xray/
+    mkdir -p /var/log/xray/
+    mkdir -p /var/www/html
+    mkdir -p /etc/kyt/limit/vmess/ip
+    mkdir -p /etc/kyt/limit/vless/ip
+    mkdir -p /etc/kyt/limit/trojan/ip
+    mkdir -p /etc/kyt/limit/ssh/ip
+    mkdir -p /etc/limit/vmess
+    mkdir -p /etc/limit/vless
+    mkdir -p /etc/limit/trojan
+    mkdir -p /etc/limit/ssh
+    chmod +x /var/log/xray
     touch /etc/xray/domain
     touch /var/log/xray/access.log
     touch /var/log/xray/error.log
@@ -524,165 +401,54 @@ function make_folder_xray() {
     touch /etc/shadowsocks/.shadowsocks.db
     touch /etc/ssh/.ssh.db
     touch /etc/bot/.bot.db
-    
-    # Tambahkan teks ke database
-    echo "& plughin Account" >> /etc/vmess/.vmess.db
-    echo "& plughin Account" >> /etc/vless/.vless.db
-    echo "& plughin Account" >> /etc/trojan/.trojan.db
-    echo "& plughin Account" >> /etc/shadowsocks/.shadowsocks.db
-    echo "& plughin Account" >> /etc/ssh/.ssh.db
-}
-
-# Install Xray
+    echo "& plughin Account" >>/etc/vmess/.vmess.db
+    echo "& plughin Account" >>/etc/vless/.vless.db
+    echo "& plughin Account" >>/etc/trojan/.trojan.db
+    echo "& plughin Account" >>/etc/shadowsocks/.shadowsocks.db
+    echo "& plughin Account" >>/etc/ssh/.ssh.db
+    }
+#Instal Xray
 function install_xray() {
-    clear
-    print_install "Core Xray Latest Version"
+clear
+    print_install "Core Xray 1.8.24 Latest Version"
+    # install xray
+    #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
+    domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
+    chown www-data.www-data $domainSock_dir
     
-    # Direktori untuk Xray socket
-    domainSock_dir="/run/xray"
-    if [ ! -d "$domainSock_dir" ]; then
-        mkdir -p "$domainSock_dir"
-        chown www-data:www-data "$domainSock_dir"
-    fi
-    
-    # Dapatkan versi terbaru dari Xray Core
-    latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | grep tag_name | sed -E 's/.*"v(.*)".*/\1/')"
-    
-    # Unduh dan Instal Xray Core
-    bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version "$latest_version"
-    
-    # Ambil Config Server
+    # / / Ambil Xray Core Version Terbaru
+latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+#bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
+ 
+    # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
+    #wget -O /usr/local/bin/xray "${REPO}xray/xray.linux.64bit" >/dev/null 2>&1
     wget -O /etc/systemd/system/runn.service "${REPO}limit/runn.service" >/dev/null 2>&1
-    
-    # Konfigurasi Xray
+    #chmod +x /usr/local/bin/xray
     domain=$(cat /etc/xray/domain)
     IPVS=$(cat /etc/xray/ipvps)
+    print_success "Core Xray 1.8.24 Latest Version"
     
-    print_success "Core Xray $latest_version Installed Successfully"
-}
+    # Settings UP Nginix Server
+    clear
+    curl -s ipinfo.io/city >>/etc/xray/city
+    curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
+    print_install "Memasang Konfigurasi Packet"
+    wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
+    wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
+    sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
+    sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
+    curl ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
+    
+cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
 
+    # > Set Permission
+    chmod +x /etc/systemd/system/runn.service
 
-# Function to print messages with a timestamp
-print_install() {
-    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
-}
-
-# Settings UP Nginx Server
-clear
-
-# Ensure necessary directories and files exist
-mkdir -p /etc/xray
-mkdir -p /etc/haproxy
-mkdir -p /etc/nginx/conf.d
-
-# Fetch city and ISP information
-curl -s ipinfo.io/city > /etc/xray/city
-curl -s ipinfo.io/org | cut -d " " -f 2-10 > /etc/xray/isp
-
-# Print message
-print_install "Memasang Konfigurasi Packet"
-
-# Download configuration files
-wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
-wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
-
-# Replace placeholder in configuration files
-sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
-sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
-
-# Download and update main Nginx configuration
-curl -s ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
-
-# Optional: Restart services to apply changes
-if systemctl --quiet is-active nginx && systemctl --quiet is-active haproxy; then
-    print_install "Restarting Nginx and HAProxy services"
-    systemctl restart nginx
-    systemctl restart haproxy
-else
-    print_install "Nginx or HAProxy service is not running or systemctl not found"
-fi
-
-
-# Function to print messages with a timestamp
-print_install() {
-    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
-}
-
-# Function to print success messages with a timestamp
-print_success() {
-    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
-}
-
-# Create necessary directories and fetch system information
-print_install "Membuat direktori xray"
-mkdir -p /etc/xray
-mkdir -p /var/log/xray
-mkdir -p /var/lib/kyt
-
-# Set permissions for log directory
-chown www-data:www-data /var/log/xray
-chmod 755 /var/log/xray
-
-# Fetch system and network information
-TOKEN="22bdf1094ea479"
-curl -s "https://ipinfo.io/ip/?token=${TOKEN}" > /etc/xray/ipvps
-curl -s "https://ipinfo.io/city?token=${TOKEN}" > /etc/xray/city
-curl -s "https://ipinfo.io/timezone?token=${TOKEN}" > /etc/xray/timezone
-curl -s "https://ipinfo.io/org?token=${TOKEN}" | cut -d " " -f 2-10 > /etc/xray/isp
-
-# Create empty files
-touch /etc/xray/domain
-touch /var/log/xray/access.log
-touch /var/log/xray/error.log
-
-# Collect RAM information
-mem_used=0
-mem_total=0
-while IFS=":" read -r a b; do
-    case $a in
-        "MemTotal") ((mem_total+=${b/kB}));;
-        "Shmem") ((mem_used+=${b/kB}));;
-        "MemFree" | "Buffers" | "Cached" | "SReclaimable")
-            mem_used="$((mem_used-=${b/kB}))"
-    ;;
-    esac
-done < /proc/meminfo
-
-Ram_Usage="$((mem_used / 1024))"
-Ram_Total="$((mem_total / 1024))"
-
-# Export system information
-export tanggal=$(date +"%d-%m-%Y - %X")
-export OS_Name=$(grep -w PRETTY_NAME /etc/os-release | sed 's/PRETTY_NAME=//g' | sed 's/"//g')
-export Kernel=$(uname -r)
-export Arch=$(uname -m)
-export IP=$(curl -s https://ipinfo.io/ip/)
-
-# Print collected information
-print_install "System Information:"
-print_install "Date: $tanggal"
-print_install "OS: $OS_Name"
-print_install "Kernel: $Kernel"
-print_install "Architecture: $Arch"
-print_install "IP Address: $IP"
-print_install "RAM Usage: ${Ram_Usage}MB / ${Ram_Total}MB"
-
-# Configuration completion message
-print_install "Configuration completed."
-
-# Combine certificates and keys into a single PEM file
-cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem > /dev/null
-
-# Set permissions for the service file
-chmod 644 /etc/systemd/system/xray.service
-
-# Create and configure the Xray systemd service
-print_install "Setting up Xray systemd service"
-rm -rf /etc/systemd/system/xray.service.d
-
-cat >/etc/systemd/system/xray.service <<EOF
-[Unit]
+    # > Create Service
+    rm -rf /etc/systemd/system/xray.service.d
+    cat >/etc/systemd/system/xray.service <<EOF
 Description=Xray Service
 Documentation=https://github.com
 After=network.target nss-lookup.target
@@ -700,11 +466,10 @@ LimitNOFILE=1000000
 
 [Install]
 WantedBy=multi-user.target
+
 EOF
-
-# Notify completion
-print_success "Xray service configuration completed and enabled."
-
+print_success "Konfigurasi Packet"
+}
 
 function ssh(){
 clear
@@ -910,9 +675,9 @@ print_install "Menginstall Vnstat"
 apt -y install vnstat > /dev/null 2>&1
 /etc/init.d/vnstat restart
 apt -y install libsqlite3-dev > /dev/null 2>&1
-wget https://humdi.net/vnstat/vnstat-2.12.tar.gz
-tar zxvf vnstat-2.12.tar.gz
-cd vnstat-2.12
+wget https://humdi.net/vnstat/vnstat-2.6.tar.gz
+tar zxvf vnstat-2.6.tar.gz
+cd vnstat-2.6
 ./configure --prefix=/usr --sysconfdir=/etc && make && make install
 cd
 vnstat -u -i $NET
@@ -921,8 +686,8 @@ chown vnstat:vnstat /var/lib/vnstat -R
 systemctl enable vnstat
 /etc/init.d/vnstat restart
 /etc/init.d/vnstat status
-rm -f /root/vnstat-2.12.tar.gz
-rm -rf /root/vnstat-2.12
+rm -f /root/vnstat-2.6.tar.gz
+rm -rf /root/vnstat-2.6
 print_success "Vnstat"
 }
 
@@ -961,9 +726,9 @@ account default
 host smtp.gmail.com
 port 587
 auth on
-user serverkubackup@gmail.com
-from serverkubackup@gmail.com
-password serverkubackup 2023 
+user oceantestdigital@gmail.com
+from oceantestdigital@gmail.com
+password jokerman77 
 logfile ~/.msmtp.log
 EOF
 chown -R www-data:www-data /etc/msmtprc
@@ -994,7 +759,7 @@ clear
     chronyc tracking -v
     
     wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
-print_success "Swap 1 G"
+# print_success "Swap 1 G"
 }
 
 function ins_Fail2ban(){
@@ -1175,31 +940,17 @@ systemctl restart netfilter-persistent
 exit 0
 EOF
 
-# Function to print success messages with a timestamp
-print_success() {
-    echo "[$(date +"%Y-%m-%d %H:%M:%S")] $1"
-}
-
-# Make /etc/rc.local executable
-chmod +x /etc/rc.local
-
-# Read the reboot setting
-AUTOREB=$(cat /home/daily_reboot 2>/dev/null)
-SETT=11
-
-# Check if AUTOREB is greater than SETT
-if [ "$AUTOREB" -gt "$SETT" ]; then
-    TIME_DATE="PM"
-else
-    TIME_DATE="AM"
-fi
-
-# Print success message
+    chmod +x /etc/rc.local
+    
+    AUTOREB=$(cat /home/daily_reboot)
+    SETT=11
+    if [ $AUTOREB -gt $SETT ]; then
+        TIME_DATE="PM"
+    else
+        TIME_DATE="AM"
+    fi
 print_success "Menu Packet"
-
-# Optional: Print out the result of the time of day determination
-print_success "Current Time of Day: $TIME_DATE"
-
+}
 
 # Restart layanan after install
 function enable_services(){
@@ -1262,4 +1013,3 @@ echo -e "${green} Script Successfull Installed"
 echo ""
 read -p "$( echo -e "Press ${YELLOW}[ ${NC}${YELLOW}Enter${NC} ${YELLOW}]${NC} For Reboot") "
 reboot
-
