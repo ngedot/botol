@@ -106,7 +106,7 @@ asu=`cat<<EOF
       "id": "${uuid}",
       "aid": "0",
       "net": "ws",
-      "path": "/vmess",
+      "path": "/vmess-ws",
       "type": "none",
       "host": "${domain}",
       "tls": "tls"
@@ -121,7 +121,7 @@ ask=`cat<<EOF
       "id": "${uuid}",
       "aid": "0",
       "net": "ws",
-      "path": "/vmess",
+      "path": "/vmess-ws",
       "type": "none",
       "host": "${domain}",
       "tls": "none"
@@ -172,7 +172,7 @@ cat >/var/www/html/vmess-$user.txt <<-END
   servername: ${domain}
   network: ws
   ws-opts:
-    path: /vmess
+    path: /vmess-ws
     headers:
       Host: ${domain}
 
@@ -191,7 +191,7 @@ cat >/var/www/html/vmess-$user.txt <<-END
   servername: ${domain}
   network: ws
   ws-opts:
-    path: /vmess
+    path: /vmess-ws
     headers:
       Host: ${domain}
 
@@ -268,8 +268,8 @@ id        : ${uuid}
 alterId   : 0
 Security  : auto
 network   : ws or grpc
-Path      : /Multi-Path
-Dynamic   : https://bugmu.com/path
+Path      : /vmess-ws
+Dynamic   : https://bugmu.com/vmess-ws
 Name      : vmess-grpc</code>
 <code>◇━━━━━━━━━━━━━━━━━◇</code>
 <code> VMESS WS TLS</code>
@@ -283,8 +283,8 @@ Name      : vmess-grpc</code>
 <code> VMESS gRPC</code>
 <code>◇━━━━━━━━━━━━━━━━━◇</code>
 <code>${vmesslink3}</code>
-<code>◇━━━━━━━━━━━━━━━━━◇</code>
-Format OpenClash : https://${domain}:81/vmess-$user.txt
+# <code>◇━━━━━━━━━━━━━━━━━◇</code>
+# Format OpenClash : https://${domain}:81/vmess-$user.txt
 <code>◇━━━━━━━━━━━━━━━━━◇</code>
 Aktif Selama   : $masaaktif Hari
 Dibuat Pada    : $tnggl
