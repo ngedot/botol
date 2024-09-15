@@ -415,7 +415,7 @@ rm -rf /etc/vmess/.vmess.db
 #Instal Xray
 function install_xray() {
 clear
-    print_install "Core Xray 1.8.7 Latest Version"
+    print_install "Core Xray 1.8.24 Latest Version"
     # install xray
     #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
     domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
@@ -424,7 +424,7 @@ clear
     # / / Ambil Xray Core Version Terbaru
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
 #bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.7
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
  
     # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
@@ -433,7 +433,7 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
     #chmod +x /usr/local/bin/xray
     domain=$(cat /etc/xray/domain)
     IPVS=$(cat /etc/xray/ipvps)
-    print_success "Core Xray 1.8.7 Latest Version"
+    print_success "Core Xray 1.8.24 Latest Version"
     
     # Settings UP Nginix Server
     clear
@@ -744,19 +744,19 @@ print_success "Backup Server"
 clear
 function ins_swab(){
 clear
-print_install "Memasang Swap 1 G"
-gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-    gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
-    curl -sL "$gotop_link" -o /tmp/gotop.deb
-    dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+# print_install "Memasang Swap 1 G"
+# gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+#     gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+#     curl -sL "$gotop_link" -o /tmp/gotop.deb
+#     dpkg -i /tmp/gotop.deb >/dev/null 2>&1
     
-        # > Buat swap sebesar 1G
-    dd if=/dev/zero of=/swapfile bs=1024 count=1048576
-    mkswap /swapfile
-    chown root:root /swapfile
-    chmod 0600 /swapfile >/dev/null 2>&1
-    swapon /swapfile >/dev/null 2>&1
-    sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
+#         # > Buat swap sebesar 1G
+#     dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+#     mkswap /swapfile
+#     chown root:root /swapfile
+#     chmod 0600 /swapfile >/dev/null 2>&1
+#     swapon /swapfile >/dev/null 2>&1
+#     sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
 
     # > Singkronisasi jam
     chronyd -q 'server 0.id.pool.ntp.org iburst'
@@ -764,7 +764,7 @@ gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | 
     chronyc tracking -v
     
     wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
-print_success "Swap 1 G"
+# print_success "Swap 1 G"
 }
 
 function ins_Fail2ban(){
