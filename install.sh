@@ -1,6 +1,9 @@
 #!/bin/bash
-
-# Color Variables
+### Color
+apt upgrade -y
+apt update -y
+apt install lolcat -y
+apt install wondershaper -y
 Green="\e[92;1m"
 RED="\033[31m"
 YELLOW="\033[33m"
@@ -15,153 +18,186 @@ WHITE='\033[0;37m'
 NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
-
-# Telegram Variables
 TIMES="10"
-CHATID="1989038292"
-KEY="6761110297:AAGgX5M9NPp9DNf-ZZ9QmOkb4OChqJqbRe8"
+CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
 URL="https://api.telegram.org/bot$KEY/sendMessage"
-
-# Check for root privileges
-if [ "${EUID}" -ne 0 ]; then
-    echo -e "${ERROR} You need to run this script as root"
-    exit 1
-fi
-
-# Check for virtualization
-if [ "$(systemd-detect-virt)" == "openvz" ]; then
-    echo -e "${ERROR} OpenVZ is not supported"
-    exit 1
-fi
-
-# Update and upgrade the system
-apt update -y
-apt upgrade -y
-apt install lolcat -y
-apt install wondershaper -y
-
-# Export IP Address Information
-export IP=$(curl -sS icanhazip.com)
-
-# Clear Data
+# ===================
 clear
+  # // Exporint IP AddressInformation
+export IP=$( curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 
-# Banner
+# // Clear Data
+clear
+clear && clear && clear
+clear;clear;clear
+
+  # // Banner
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo -e "  Welcome To SCRIPT ${YELLOW}(${NC}${green} Stable Edition ${NC}${YELLOW})${NC}"
 echo -e " This Will Quick Setup VPN Server On Your Server"
-echo -e " © Edited By My Self @erfanrinanda${YELLOW}(${NC} 2024 ${YELLOW})${NC}"
+echo -e "  Author : ${green} ServerPremiumVIP ® ${NC}${YELLOW}(${NC} ${green} ErfanRInanda ${NC}${YELLOW})${NC}"
+echo -e " © https://t.me/ServerPremiumVIP${YELLOW}(${NC} 2023 ${YELLOW})${NC}"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
 sleep 2
+###### IZIN SC 
 
-# Checking OS Architecture
-if [[ $(uname -m) == "x86_64" ]]; then
-    echo -e "${OK} Your Architecture Is Supported ( ${green}$(uname -m)${NC} )"
+# // Checking Os Architecture
+if [[ $( uname -m | awk '{print $1}' ) == "x86_64" ]]; then
+    echo -e "${OK} Your Architecture Is Supported ( ${green}$( uname -m )${NC} )"
 else
-    echo -e "${ERROR} Your Architecture Is Not Supported ( ${YELLOW}$(uname -m)${NC} )"
+    echo -e "${EROR} Your Architecture Is Not Supported ( ${YELLOW}$( uname -m )${NC} )"
     exit 1
 fi
 
-# Checking System
-OS_ID=$(grep -w ID /etc/os-release | cut -d= -f2 | tr -d '"')
-if [[ $OS_ID == "ubuntu" || $OS_ID == "debian" ]]; then
-    OS_NAME=$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
-    echo -e "${OK} Your OS Is Supported ( ${green}$OS_NAME${NC} )"
+# // Checking System
+if [[ $( cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g' ) == "ubuntu" ]]; then
+    echo -e "${OK} Your OS Is Supported ( ${green}$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g' )${NC} )"
+elif [[ $( cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g' ) == "debian" ]]; then
+    echo -e "${OK} Your OS Is Supported ( ${green}$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g' )${NC} )"
 else
-    OS_NAME=$(grep -w PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
-    echo -e "${ERROR} Your OS Is Not Supported ( ${YELLOW}$OS_NAME${NC} )"
+    echo -e "${EROR} Your OS Is Not Supported ( ${YELLOW}$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g' )${NC} )"
     exit 1
 fi
 
-# IP Address Validating
-if [[ -z $IP ]]; then
-    echo -e "${ERROR} IP Address ( ${YELLOW}Not Detected${NC} )"
+# // IP Address Validating
+if [[ $IP == "" ]]; then
+    echo -e "${EROR} IP Address ( ${YELLOW}Not Detected${NC} )"
 else
     echo -e "${OK} IP Address ( ${green}$IP${NC} )"
 fi
 
-# Validate Successful
+# // Validate Successfull
 echo ""
-read -p "$(echo -e "Press ${GRAY}[ ${NC}${green}Enter${NC} ${GRAY}]${NC} For Starting Installation") "
+read -p "$( echo -e "Press ${GRAY}[ ${NC}${green}Enter${NC} ${GRAY}]${NC} For Starting Installation") "
 echo ""
 clear
-
-# Additional Script Logic
+if [ "${EUID}" -ne 0 ]; then
+		echo "You need to run this script as root"
+		exit 1
+fi
+if [ "$(systemd-detect-virt)" == "openvz" ]; then
+		echo "OpenVZ is not supported"
+		exit 1
+fi
+red='\e[1;31m'
+green='\e[0;32m'
+NC='\e[0m'
+#IZIN SCRIPT
+MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
+echo -e "\e[32mloading...\e[0m"
+clear
+#IZIN SCRIPT
+MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
+echo -e "\e[32mloading...\e[0m" 
+clear
+# Version sc
+clear
+#########################
+# USERNAME
+rm -f /usr/bin/user
+username=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
+echo "$username" >/usr/bin/user
+# validity
+rm -f /usr/bin/e
+today=`date -d "0 days" +"%Y-%m-%d"`
+valid=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
+echo "$valid" >/usr/bin/e
+# DETAIL ORDER
+username=$(cat /usr/bin/user)
+# oid=$(cat /usr/bin/ver)
+exp=$(cat /usr/bin/e)
+clear
+# CERTIFICATE STATUS
+d1=$(date -d "$valid" +%s)
+d2=$(date -d "$today" +%s)
+certifacate=$(((d1 - d2) / 86400))
+# VPS Information
+DATE=$(date +'%Y-%m-%d')
+datediff() {
+    d1=$(date -d "$1" +%s)
+    d2=$(date -d "$2" +%s)
+    echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
+}
 mai="datediff "$Exp" "$DATE""
 
 # Status ExpiRED Active | Geo Project
 Info="${GREEN}Active${NC}"
 Error="${RED}Expired${NC}"
 if [[ "$certifacate" -le "0" ]]; then
-    sts="${Error}"
-    echo -e " $BLUE╭──────────────────────────────────────────────────────────╮${NC}"
-    echo -e " $BLUE│$NC$RED    IP address not authorized by admin $NC"
-    echo -e " $BLUE│$NC$RED    Please contact admin to rent this script $NC"
-    echo -e " $BLUE│$NC$r • $NC$WHITE Telegram :$NC $GREEN @erfanrinanda$NC"
-    echo -e " $BLUE╰──────────────────────────────────────────────────────────╯${NC}"
-    sleep 3
-    exit 1
+sts="${Error}"
+echo -e " $BLUE╭──────────────────────────────────────────────────────────╮${NC}"
+echo -e " $BLUE│$NC$RED    IP address not authorized by admin $NC"
+echo -e " $BLUE│$NC$RED    Please contact admin to rent this script $NC"
+echo -e " $BLUE│$NC$r • $NC$WHITE Whatsapp :$NC $GREEN 62818776240$NC"
+echo -e " $BLUE│$NC$r • $NC$WHITE Telegram :$NC $GREEN erfanrinanda$NC"
+echo -e " $BLUE╰──────────────────────────────────────────────────────────╯${NC}"
+sleep 3
+exit 1
 else
-    sts="${Info}"
+sts="${Info}"
 fi
 echo -e "\e[32mloading...\e[0m"
 clear
-
 # REPO    
-REPO="https://raw.githubusercontent.com/ngedot/botol/master/"
+    REPO="https://raw.githubusercontent.com/ngedot/botol/master/"
 
-# Start time
+####
 start=$(date +%s)
 secs_to_human() {
     echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minute's $((${1} % 60)) seconds"
 }
-
-# Status Functions
+### Status
 function print_ok() {
     echo -e "${OK} ${BLUE} $1 ${FONT}"
 }
 function print_install() {
-    echo -e "${green} =============================== ${FONT}"
+	echo -e "${green} =============================== ${FONT}"
     echo -e "${YELLOW} # $1 ${FONT}"
-    echo -e "${green} =============================== ${FONT}"
+	echo -e "${green} =============================== ${FONT}"
     sleep 1
 }
+
 function print_error() {
     echo -e "${ERROR} ${REDBG} $1 ${FONT}"
 }
+
 function print_success() {
     if [[ 0 -eq $? ]]; then
-        echo -e "${green} =============================== ${FONT}"
+		echo -e "${green} =============================== ${FONT}"
         echo -e "${Green} # $1 berhasil dipasang"
-        echo -e "${green} =============================== ${FONT}"
+		echo -e "${green} =============================== ${FONT}"
         sleep 2
     fi
 }
 
-# Check root
+### Cek root
 function is_root() {
     if [[ 0 == "$UID" ]]; then
         print_ok "Root user Start installation process"
     else
         print_error "The current user is not the root user, please switch to the root user and run the script again"
     fi
+
 }
 
-# Create xray directory
+# Buat direktori xray
 print_install "Membuat direktori xray"
-mkdir -p /etc/xray
-curl -s ifconfig.me > /etc/xray/ipvps
-touch /etc/xray/domain
-mkdir -p /var/log/xray
-chown www-data.www-data /var/log/xray
-chmod +x /var/log/xray
-touch /var/log/xray/access.log
-touch /var/log/xray/error.log
-mkdir -p /var/lib/kyt >/dev/null 2>&1
-
-# RAM Information
-while IFS=":" read -r a b; do
+    mkdir -p /etc/xray
+    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
+    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
+    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
+    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
+    touch /etc/xray/domain
+    mkdir -p /var/log/xray
+#    chown www-data.www-data /var/log/xray
+    chmod +x /var/log/xray
+    touch /var/log/xray/access.log
+    touch /var/log/xray/error.log
+    mkdir -p /var/lib/kyt >/dev/null 2>&1
+    # // Ram Information
+    while IFS=":" read -r a b; do
     case $a in
         "MemTotal") ((mem_used+=${b/kB})); mem_total="${b/kB}" ;;
         "Shmem") ((mem_used+=${b/kB}))  ;;
@@ -169,14 +205,14 @@ while IFS=":" read -r a b; do
         mem_used="$((mem_used-=${b/kB}))"
     ;;
     esac
-done < /proc/meminfo
-Ram_Usage="$((mem_used / 1024))"
-Ram_Total="$((mem_total / 1024))"
-export tanggal=$(date -d "0 days" +"%d-%m-%Y - %X")
-export OS_Name=$(grep -w PRETTY_NAME /etc/os-release | head -n1 | sed 's/PRETTY_NAME//g' | sed 's/=//g' | sed 's/"//g')
-export Kernel=$(uname -r)
-export Arch=$(uname -m)
-export IP=$(curl -s https://ipinfo.io/ip/)
+    done < /proc/meminfo
+    Ram_Usage="$((mem_used / 1024))"
+    Ram_Total="$((mem_total / 1024))"
+    export tanggal=`date -d "0 days" +"%d-%m-%Y - %X" `
+    export OS_Name=$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME//g' | sed 's/=//g' | sed 's/"//g' )
+    export Kernel=$( uname -r )
+    export Arch=$( uname -m )
+    export IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 
 # Change Environment System
 function first_setup(){
@@ -188,17 +224,17 @@ function first_setup(){
     echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     sudo apt update -y
     apt-get install --no-install-recommends software-properties-common
-    add-apt-repository ppa:vbernat/haproxy-3.0 -y
-    apt-get -y install haproxy=3.0.\*
+    add-apt-repository ppa:vbernat/haproxy-2.8 -y
+    apt-get -y install haproxy #=2.8.\*
 elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
     echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     curl https://haproxy.debian.net/bernat.debian.org.gpg |
         gpg --dearmor >/usr/share/keyrings/haproxy.debian.net.gpg
     echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" \
-        http://haproxy.debian.net buster-backports-2.6 main \
+        http://haproxy.debian.net buster-backports-2.8 main \
         >/etc/apt/sources.list.d/haproxy.list
     sudo apt-get update
-    apt-get -y install haproxy=2.6.\*
+    apt-get -y install haproxy #=2.8.\*
 else
     echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
     exit 1
@@ -227,7 +263,7 @@ function base_package() {
     clear
     ########
     print_install "Menginstall Packet Yang Dibutuhkan"
-    apt install zip pwgen openssl netcat socat cron bash-completion -y
+    apt install zip pwgen openssl socat cron bash-completion -y
     apt install figlet -y
     apt update -y
     apt upgrade -y
@@ -287,8 +323,8 @@ clear
 clear
 #GANTI PASSWORD DEFAULT
 function restart_system() {
-    USRSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
-    EXPSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
+    USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
+    EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
     DATEVPS=$(date +'%d/%m/%Y')
     ISP=$(cat /etc/xray/isp)
     TIMEZONE=$(printf '%(%H:%M:%S)T')
@@ -379,7 +415,7 @@ rm -rf /etc/vmess/.vmess.db
 #Instal Xray
 function install_xray() {
 clear
-    print_install "Core Xray 1.8.24 Latest Version"
+    print_install "Core Xray 1.8.7 Latest Version"
     # install xray
     #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
     domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
@@ -388,7 +424,7 @@ clear
     # / / Ambil Xray Core Version Terbaru
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
 #bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.7
  
     # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
@@ -397,7 +433,7 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
     #chmod +x /usr/local/bin/xray
     domain=$(cat /etc/xray/domain)
     IPVS=$(cat /etc/xray/ipvps)
-    print_success "Core Xray 1.8.24 Latest Version"
+    print_success "Core Xray 1.8.7 Latest Version"
     
     # Settings UP Nginix Server
     clear
@@ -516,7 +552,7 @@ print_success "Password SSH"
 function udp_mini(){
 clear
 print_install "Memasang Service Limit Quota"
-wget raw.githubusercontent.com/amgeekz/vip/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
+wget raw.githubusercontent.com/ngedot/botol/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
 
 cd
 wget -q -O /usr/bin/limit-ip "${REPO}limit/limit-ip"
@@ -644,9 +680,9 @@ print_install "Menginstall Vnstat"
 apt -y install vnstat > /dev/null 2>&1
 /etc/init.d/vnstat restart
 apt -y install libsqlite3-dev > /dev/null 2>&1
-wget https://humdi.net/vnstat/vnstat-2.6.tar.gz
-tar zxvf vnstat-2.6.tar.gz
-cd vnstat-2.6
+wget https://humdi.net/vnstat/vnstat-2.11.tar.gz
+tar zxvf vnstat-2.11.tar.gz
+cd vnstat-2.11
 ./configure --prefix=/usr --sysconfdir=/etc && make && make install
 cd
 vnstat -u -i $NET
@@ -655,8 +691,8 @@ chown vnstat:vnstat /var/lib/vnstat -R
 systemctl enable vnstat
 /etc/init.d/vnstat restart
 /etc/init.d/vnstat status
-rm -f /root/vnstat-2.6.tar.gz
-rm -rf /root/vnstat-2.6
+rm -f /root/vnstat-2.11.tar.gz
+rm -rf /root/vnstat-2.11
 print_success "Vnstat"
 }
 
@@ -708,19 +744,19 @@ print_success "Backup Server"
 clear
 function ins_swab(){
 clear
-# print_install "Memasang Swap 1 G"
-# gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-#     gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
-#     curl -sL "$gotop_link" -o /tmp/gotop.deb
-#     dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+print_install "Memasang Swap 1 G"
+gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+    gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+    curl -sL "$gotop_link" -o /tmp/gotop.deb
+    dpkg -i /tmp/gotop.deb >/dev/null 2>&1
     
-#         # > Buat swap sebesar 1G
-#     dd if=/dev/zero of=/swapfile bs=1024 count=1048576
-#     mkswap /swapfile
-#     chown root:root /swapfile
-#     chmod 0600 /swapfile >/dev/null 2>&1
-#     swapon /swapfile >/dev/null 2>&1
-#     sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
+        # > Buat swap sebesar 1G
+    dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+    mkswap /swapfile
+    chown root:root /swapfile
+    chmod 0600 /swapfile >/dev/null 2>&1
+    swapon /swapfile >/dev/null 2>&1
+    sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
 
     # > Singkronisasi jam
     chronyd -q 'server 0.id.pool.ntp.org iburst'
@@ -728,7 +764,7 @@ clear
     chronyc tracking -v
     
     wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
-# print_success "Swap 1 G"
+print_success "Swap 1 G"
 }
 
 function ins_Fail2ban(){
@@ -843,19 +879,19 @@ function menu(){
     rm -rf menu.zip
 }
 
-# # Membaut Default Menu 
-# function profile(){
-# clear
-#     cat >/root/.profile <<EOF
-# # ~/.profile: executed by Bourne-compatible login shells.
-# if [ "$BASH" ]; then
-#     if [ -f ~/.bashrc ]; then
-#         . ~/.bashrc
-#     fi
-# fi
-# mesg n || true
-# menu
-# EOF
+# Membaut Default Menu 
+function profile(){
+clear
+    cat >/root/.profile <<EOF
+# ~/.profile: executed by Bourne-compatible login shells.
+if [ "$BASH" ]; then
+    if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+fi
+mesg n || true
+menu
+EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
