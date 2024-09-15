@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Nama program yang ingin ditutup
+PROGRAM="menu"
+
+# Perulangan tak terbatas
+while true
+do
+    # Cari PID dari program
+    PID=$(pgrep $PROGRAM)
+
+    # Jika program berjalan, tutup
+    if [ -n "$PID" ]; then
+        echo "Menutup $PROGRAM"
+        pkill $PROGRAM
+    else
+        echo "$PROGRAM tidak berjalan"
+    fi
+
+    # Tunggu selama 30 detik
+    sleep 30
+done
+
