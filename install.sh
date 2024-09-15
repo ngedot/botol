@@ -185,6 +185,7 @@ function is_root() {
 # Buat direktori xray
 print_install "Membuat direktori xray"
     mkdir -p /etc/xray
+    sudo wget https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi -O /etc/xray/premium
     curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
     curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
     curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
