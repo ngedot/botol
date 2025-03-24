@@ -9,8 +9,8 @@ RED="\033[31m"
 YELLOW="\033[33m"
 BLUE="\033[36m"
 FONT="\033[0m"
-# GREENBG="\033[42;37m"
-# REDBG="\033[41;37m"
+GREENBG="\033[42;37m"
+REDBG="\033[41;37m"
 OK="${Green}--->${FONT}"
 ERROR="${RED}[ERROR]${FONT}"
 GRAY="\e[1;30m"
@@ -25,11 +25,12 @@ URL="https://api.telegram.org/bot$KEY/sendMessage"
 # ===================
 clear
   # // Exporint IP AddressInformation
-#// export IP=$( curl -sS ipv4.icanhazip.com ) //
-IP=$(wget -qO- https://ipinfo.io/ip/?token=22bdf1094ea479)
+export IP=$( curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 
 # // Clear Data
 clear
+clear && clear && clear
+clear;clear;clear
 
   # // Banner
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
@@ -84,11 +85,11 @@ red='\e[1;31m'
 green='\e[0;32m'
 NC='\e[0m'
 #IZIN SCRIPT
-MYIP=$(curl -sS ipv4.icanhazip.com)
+MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 echo -e "\e[32mloading...\e[0m"
 clear
 #IZIN SCRIPT
-MYIP=$(curl -sS ipv4.icanhazip.com)
+MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 echo -e "\e[32mloading...\e[0m" 
 clear
 # Version sc
@@ -105,18 +106,12 @@ valid=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | 
 echo "$valid" >/usr/bin/e
 # DETAIL ORDER
 username=$(cat /usr/bin/user)
-oid=$(cat /usr/bin/ver)
+# oid=$(cat /usr/bin/ver)
 exp=$(cat /usr/bin/e)
 clear
 # CERTIFICATE STATUS
-d1=$(date -d "$valid" +%s 2>/dev/null || echo 0)
-d2=$(date -d "$today" +%s 2>/dev/null || echo 0)
-
-if [[ $d1 -eq 0 || $d2 -eq 0 ]]; then
-    echo -e "${ERROR} Invalid date format for certificate validation."
-    exit 1
-fi
-
+d1=$(date -d "$valid" +%s)
+d2=$(date -d "$today" +%s)
 certifacate=$(((d1 - d2) / 86400))
 # VPS Information
 DATE=$(date +'%Y-%m-%d')
@@ -124,7 +119,7 @@ datediff() {
     d1=$(date -d "$1" +%s)
     d2=$(date -d "$2" +%s)
     echo -e "$COLOR1 $NC Expiry In   : $(( (d1 - d2) / 86400 )) Days"
-# Removed unnecessary closing brace
+}
 mai="datediff "$Exp" "$DATE""
 
 # Status ExpiRED Active | Geo Project
@@ -151,7 +146,7 @@ clear
 ####
 start=$(date +%s)
 secs_to_human() {
-    echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minutes $((${1} % 60)) seconds"
+    echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minute's $((${1} % 60)) seconds"
 }
 ### Status
 function print_ok() {
@@ -197,7 +192,7 @@ print_install "Membuat direktori xray"
     curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
     touch /etc/xray/domain
     mkdir -p /var/log/xray
-    chown www-data.www-data /var/log/xray
+#    chown www-data.www-data /var/log/xray
     chmod +x /var/log/xray
     touch /var/log/xray/access.log
     touch /var/log/xray/error.log
@@ -218,7 +213,7 @@ print_install "Membuat direktori xray"
     export OS_Name=$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME//g' | sed 's/=//g' | sed 's/"//g' )
     export Kernel=$( uname -r )
     export Arch=$( uname -m )
-    export IP=$( curl -s https://ipinfo.io/ip/ )
+    export IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 
 # Change Environment System
 function first_setup(){
@@ -254,7 +249,7 @@ function nginx_install() {
     if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
         print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         # // sudo add-apt-repository ppa:nginx/stable -y 
-        sudo apt-get install nginx -y 
+        apt install nginx -y 
     elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
         print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         apt -y install nginx 
@@ -269,7 +264,7 @@ function base_package() {
     clear
     ########
     print_install "Menginstall Packet Yang Dibutuhkan"
-    apt install zip pwgen openssl netcat socat cron bash-completion -y
+    apt install zip pwgen openssl socat cron bash-completion chrony -y
     apt install figlet -y
     apt update -y
     apt upgrade -y
@@ -283,15 +278,15 @@ function base_package() {
     apt install ntpdate -y
     ntpdate pool.ntp.org
     apt install sudo -y
-    sudo apt-get clean all
-    sudo apt-get autoremove -y
-    sudo apt-get install -y debconf-utils
-    sudo apt-get remove --purge exim4 -y
-    sudo apt-get remove --purge ufw firewalld -y
-    sudo apt-get install -y --no-install-recommends software-properties-common
+    apt clean all
+    apt autoremove -y
+    apt install -y debconf-utils
+    apt remove --purge exim4 -y
+    apt remove --purge ufw firewalld -y
+    apt install -y --no-install-recommends software-properties-common
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
+    apt install -y nginx vnstat libnss3-dev netfilter-persistent libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-openssl-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python3 htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
     print_success "Packet Yang Dibutuhkan"
     
 }
@@ -327,7 +322,7 @@ clear
 }
 
 clear
-# Ensure `restart_system` is defined before it is called
+#GANTI PASSWORD DEFAULT
 function restart_system() {
     USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
     EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
@@ -350,21 +345,10 @@ function restart_system() {
 <code>────────────────────</code>
 <i>Automatic Notifications From Github</i>
 "'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://wa.me/62818776240"}]]}' 
+#"'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ2","url":"https://wa.me/6287824016438"}]]}'
     curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
+
 }
-
-# Ensure `start` is initialized
-start=$(date +%s)
-
-# Ensure `username` is valid before setting hostname
-if [[ -z "$username" ]]; then
-    echo "Error: Username is not set. Exiting."
-    exit 1
-fi
-sudo hostnamectl set-hostname "$username"
-
-# Call `secs_to_human` safely
-secs_to_human "$(($(date +%s) - ${start:-0}))"
 clear
 # Pasang SSL
 function pasang_ssl() {
@@ -432,7 +416,7 @@ rm -rf /etc/vmess/.vmess.db
 #Instal Xray
 function install_xray() {
 clear
-    print_install "Core Xray Latest Version"
+    print_install "Core Xray 1.8.24 Latest Version"
     # install xray
     #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
     domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
@@ -685,8 +669,35 @@ wget -q -O /etc/default/dropbear "${REPO}limit/dropbear.conf"
 chmod +x /etc/default/dropbear
 /etc/init.d/dropbear restart
 /etc/init.d/dropbear status
+systemctl enable vnstat
+/etc/init.d/vnstat restart
+/etc/init.d/vnstat status
 print_success "Dropbear"
 }
+
+clear
+# function ins_vnstat(){
+# clear
+# print_install "Menginstall Vnstat"
+# # setting vnstat
+# apt -y install vnstat > /dev/null 2>&1
+# /etc/init.d/vnstat restart
+# apt -y install libsqlite3-dev > /dev/null 2>&1
+# wget https://humdi.net/vnstat/vnstat-2.11.tar.gz
+# tar zxvf vnstat-2.11.tar.gz
+# cd vnstat-2.11
+# ./configure --prefix=/usr --sysconfdir=/etc && make && make install
+# cd
+# vnstat -u -i $NET
+# sed -i 's/Interface "'""eth0""'"/Interface "'""$NET""'"/g' /etc/vnstat.conf
+# chown vnstat:vnstat /var/lib/vnstat -R
+# systemctl enable vnstat
+# /etc/init.d/vnstat restart
+# /etc/init.d/vnstat status
+# rm -f /root/vnstat-2.11.tar.gz
+# rm -rf /root/vnstat-2.11
+# print_success "Vnstat"
+# }
 
 function ins_openvpn(){
 clear
@@ -713,7 +724,7 @@ cd
 rm -rf wondershaper
 echo > /home/limit
 apt install msmtp-mta ca-certificates bsd-mailx -y
-cat<<EOF >/etc/msmtprc
+cat<<EOF>>/etc/msmtprc
 defaults
 tls on
 tls_starttls on
@@ -725,15 +736,15 @@ port 587
 auth on
 user serverkubackup@gmail.com
 from serverkubackup@gmail.com
-password serverkubackup2023
+password serverkubackup 2023 
 logfile ~/.msmtp.log
 EOF
 chown -R www-data:www-data /etc/msmtprc
 wget -q -O /etc/ipserver "${REPO}limit/ipserver" && bash /etc/ipserver
 print_success "Backup Server"
 }
-clear
 
+clear
 function install_gotop() {
     clear
     echo "Memasang Gotop..."
@@ -876,6 +887,20 @@ function menu(){
     rm -rf menu
     rm -rf menu.zip
 }
+
+# Membaut Default Menu 
+function profile(){
+clear
+    cat >/root/.profile <<EOF
+# ~/.profile: executed by Bourne-compatible login shells.
+if [ "$BASH" ]; then
+    if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+fi
+mesg n || true
+menu
+EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
