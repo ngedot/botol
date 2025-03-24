@@ -9,8 +9,8 @@ RED="\033[31m"
 YELLOW="\033[33m"
 BLUE="\033[36m"
 FONT="\033[0m"
-GREENBG="\033[42;37m"
-REDBG="\033[41;37m"
+# GREENBG="\033[42;37m"
+# REDBG="\033[41;37m"
 OK="${Green}--->${FONT}"
 ERROR="${RED}[ERROR]${FONT}"
 GRAY="\e[1;30m"
@@ -30,8 +30,6 @@ IP=$(wget -qO- https://ipinfo.io/ip/?token=22bdf1094ea479)
 
 # // Clear Data
 clear
-clear && clear && clear
-clear;clear;clear
 
   # // Banner
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
@@ -147,7 +145,7 @@ clear
 ####
 start=$(date +%s)
 secs_to_human() {
-    echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minute's $((${1} % 60)) seconds"
+    echo "Installation time : $((${1} / 3600)) hours $(((${1} / 60) % 60)) minutes $((${1} % 60)) seconds"
 }
 ### Status
 function print_ok() {
@@ -186,7 +184,11 @@ function is_root() {
 # Buat direktori xray
 print_install "Membuat direktori xray"
     mkdir -p /etc/xray
-    curl -s ifconfig.me > /etc/xray/ipvps
+    wget https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi -O /etc/xray/premium
+    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
+    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
+    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
+    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
     touch /etc/xray/domain
     mkdir -p /var/log/xray
     chown www-data.www-data /var/log/xray
@@ -341,7 +343,7 @@ function restart_system() {
 <b> SCRIPT NOTIF </b>
 <code>────────────────────</code>
 <i>Automatic Notifications From Github</i>
-"'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://wa.me/6285649455626"}]]}' 
+"'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://wa.me/62818776240"}]]}' 
 #"'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ2","url":"https://wa.me/6287824016438"}]]}'
     curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
 
@@ -857,20 +859,6 @@ function menu(){
     rm -rf menu
     rm -rf menu.zip
 }
-
-# # Membaut Default Menu 
-# function profile(){
-# clear
-#     cat >/root/.profile <<EOF
-# # ~/.profile: executed by Bourne-compatible login shells.
-# if [ "$BASH" ]; then
-#     if [ -f ~/.bashrc ]; then
-#         . ~/.bashrc
-#     fi
-# fi
-# mesg n || true
-# menu
-# EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
