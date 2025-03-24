@@ -19,14 +19,14 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIMES="10"
-CHATID="1989038292"
-KEY="6761110297:AAGgX5M9NPp9DNf-ZZ9QmOkb4OChqJqbRe8"
+CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
+KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 # ===================
 clear
   # // Exporint IP AddressInformation
 #// export IP=$( curl -sS ipv4.icanhazip.com ) //
-IP=$(wget -qO- ipinfo.io/ip)
+IP=$(wget -qO- https://ipinfo.io/ip/?token=22bdf1094ea479)
 
 # // Clear Data
 clear
