@@ -19,18 +19,15 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIMES="10"
+# Telegram Bot Configuration
 CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
 KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
 URL="https://api.telegram.org/bot$KEY/sendMessage"
-# ===================
-clear
   # // Exporint IP AddressInformation
 export IP=$( curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 
 # // Clear Data
 clear
-clear && clear && clear
-clear;clear;clear
 
   # // Banner
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
