@@ -373,7 +373,7 @@ print_install "Memasang SSL Pada Domain"
 }
 
 function make_folder_xray() {
-rm -rf /etc/vmess/.vmess.db
+    rm -rf /etc/vmess/.vmess.db
     rm -rf /etc/vless/.vless.db
     rm -rf /etc/trojan/.trojan.db
     rm -rf /etc/shadowsocks/.shadowsocks.db
@@ -412,7 +412,7 @@ rm -rf /etc/vmess/.vmess.db
     echo "& plughin Account" >>/etc/trojan/.trojan.db
     echo "& plughin Account" >>/etc/shadowsocks/.shadowsocks.db
     echo "& plughin Account" >>/etc/ssh/.ssh.db
-    }
+}
 #Instal Xray
 function install_xray() {
 clear
@@ -423,16 +423,9 @@ clear
     chown www-data.www-data $domainSock_dir
     
     # / / Ambil Xray Core Version Terbaru
-# latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-# #bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-# bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 25.3.6
-
-# Ambil Xray Core Version Terbaru dari GitHub
-latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases/latest | jq -r .tag_name | sed 's/^v//')"
-
-# Instal Xray dengan versi terbaru
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-
+latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+#bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
  
     # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
@@ -756,10 +749,10 @@ clear
 function ins_swab(){
 clear
 # print_install "Memasang Swap 1 G"
- gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-     gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
-     curl -sL "$gotop_link" -o /tmp/gotop.deb
-     dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+# gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+#     gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+#     curl -sL "$gotop_link" -o /tmp/gotop.deb
+#     dpkg -i /tmp/gotop.deb >/dev/null 2>&1
     
 #         # > Buat swap sebesar 1G
 #     dd if=/dev/zero of=/swapfile bs=1024 count=1048576
@@ -890,19 +883,19 @@ function menu(){
     rm -rf menu.zip
 }
 
-# # Membaut Default Menu 
-# function profile(){
-# clear
-#     cat >/root/.profile <<EOF
-# # ~/.profile: executed by Bourne-compatible login shells.
-# if [ "$BASH" ]; then
-#     if [ -f ~/.bashrc ]; then
-#         . ~/.bashrc
-#     fi
-# fi
-# mesg n || true
-# menu
-# EOF
+# Membaut Default Menu 
+function profile(){
+clear
+    cat >/root/.profile <<EOF
+# ~/.profile: executed by Bourne-compatible login shells.
+if [ "$BASH" ]; then
+    if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+fi
+mesg n || true
+menu
+EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
