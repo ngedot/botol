@@ -109,8 +109,14 @@ oid=$(cat /usr/bin/ver)
 exp=$(cat /usr/bin/e)
 clear
 # CERTIFICATE STATUS
-d1=$(date -d "$valid" +%s)
-d2=$(date -d "$today" +%s)
+d1=$(date -d "$valid" +%s 2>/dev/null || echo 0)
+d2=$(date -d "$today" +%s 2>/dev/null || echo 0)
+
+if [[ $d1 -eq 0 || $d2 -eq 0 ]]; then
+    echo -e "${ERROR} Invalid date format for certificate validation."
+    exit 1
+fi
+
 certifacate=$(((d1 - d2) / 86400))
 # VPS Information
 DATE=$(date +'%Y-%m-%d')
