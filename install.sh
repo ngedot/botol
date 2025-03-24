@@ -327,7 +327,7 @@ clear
 }
 
 clear
-#GANTI PASSWORD DEFAULT
+# Ensure `restart_system` is defined before it is called
 function restart_system() {
     USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
     EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
@@ -350,10 +350,21 @@ function restart_system() {
 <code>────────────────────</code>
 <i>Automatic Notifications From Github</i>
 "'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ","url":"https://wa.me/62818776240"}]]}' 
-#"'&reply_markup={"inline_keyboard":[[{"text":"ᴏʀᴅᴇʀ2","url":"https://wa.me/6287824016438"}]]}'
     curl -s --max-time $TIMES -d "chat_id=$CHATID&disable_web_page_preview=1&text=$TEXT&parse_mode=html" $URL >/dev/null
-
 }
+
+# Ensure `start` is initialized
+start=$(date +%s)
+
+# Ensure `username` is valid before setting hostname
+if [[ -z "$username" ]]; then
+    echo "Error: Username is not set. Exiting."
+    exit 1
+fi
+sudo hostnamectl set-hostname "$username"
+
+# Call `secs_to_human` safely
+secs_to_human "$(($(date +%s) - ${start:-0}))"
 clear
 # Pasang SSL
 function pasang_ssl() {
