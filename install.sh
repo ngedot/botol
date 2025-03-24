@@ -373,7 +373,7 @@ print_install "Memasang SSL Pada Domain"
 }
 
 function make_folder_xray() {
-    rm -rf /etc/vmess/.vmess.db
+rm -rf /etc/vmess/.vmess.db
     rm -rf /etc/vless/.vless.db
     rm -rf /etc/trojan/.trojan.db
     rm -rf /etc/shadowsocks/.shadowsocks.db
@@ -412,7 +412,7 @@ function make_folder_xray() {
     echo "& plughin Account" >>/etc/trojan/.trojan.db
     echo "& plughin Account" >>/etc/shadowsocks/.shadowsocks.db
     echo "& plughin Account" >>/etc/ssh/.ssh.db
-}
+    }
 #Instal Xray
 function install_xray() {
 clear
@@ -725,7 +725,8 @@ cd
 rm -rf wondershaper
 echo > /home/limit
 apt install msmtp-mta ca-certificates bsd-mailx -y
-cat<<EOF>>/etc/msmtprc
+# Buat file konfigurasi msmtp
+cat <<EOF > /etc/msmtprc
 defaults
 tls on
 tls_starttls on
@@ -737,13 +738,13 @@ port 587
 auth on
 user serverkubackup@gmail.com
 from serverkubackup@gmail.com
-password serverkubackup 2023 
+password serverkubackup2023
 logfile ~/.msmtp.log
 EOF
+
+# Set izin untuk file msmtprc
 chown -R www-data:www-data /etc/msmtprc
-wget -q -O /etc/ipserver "${REPO}limit/ipserver" && bash /etc/ipserver
-print_success "Backup Server"
-}
+chmod 600 /etc/msmtprc
 
 clear
 function ins_swab(){
@@ -883,7 +884,7 @@ function menu(){
     rm -rf menu.zip
 }
 
-# # Membaut Default Menu 
+# Membaut Default Menu 
 # function profile(){
 # clear
 #     cat >/root/.profile <<EOF
