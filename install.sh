@@ -19,13 +19,14 @@ NC='\e[0m'
 red='\e[1;31m'
 green='\e[0;32m'
 TIMES="10"
-CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
-KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
+CHATID="1989038292"
+KEY="6761110297:AAGgX5M9NPp9DNf-ZZ9QmOkb4OChqJqbRe8"
 URL="https://api.telegram.org/bot$KEY/sendMessage"
 # ===================
 clear
   # // Exporint IP AddressInformation
-export IP=$( curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
+#// export IP=$( curl -sS ipv4.icanhazip.com ) //
+IP=$(wget -qO- ipinfo.io/ip)
 
 # // Clear Data
 clear
@@ -36,8 +37,8 @@ clear;clear;clear
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo -e "  Welcome To SCRIPT ${YELLOW}(${NC}${green} Stable Edition ${NC}${YELLOW})${NC}"
 echo -e " This Will Quick Setup VPN Server On Your Server"
-echo -e "  Author : ${green} ServerPremiumVIP ® ${NC}${YELLOW}(${NC} ${green} ErfanRInanda ${NC}${YELLOW})${NC}"
-echo -e " © https://t.me/ServerPremiumVIP${YELLOW}(${NC} 2023 ${YELLOW})${NC}"
+echo -e "  Author : ${green} AMGEEKZ ® ${NC}${YELLOW}(${NC} ${green} AMGEEKZ ${NC}${YELLOW})${NC}"
+echo -e " © Recode By My Self AMGEEKZ${YELLOW}(${NC} 2023 ${YELLOW})${NC}"
 echo -e "${YELLOW}----------------------------------------------------------${NC}"
 echo ""
 sleep 2
@@ -85,11 +86,11 @@ red='\e[1;31m'
 green='\e[0;32m'
 NC='\e[0m'
 #IZIN SCRIPT
-MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
+MYIP=$(curl -sS ipv4.icanhazip.com)
 echo -e "\e[32mloading...\e[0m"
 clear
 #IZIN SCRIPT
-MYIP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
+MYIP=$(curl -sS ipv4.icanhazip.com)
 echo -e "\e[32mloading...\e[0m" 
 clear
 # Version sc
@@ -97,16 +98,16 @@ clear
 #########################
 # USERNAME
 rm -f /usr/bin/user
-username=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
+username=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
 echo "$username" >/usr/bin/user
 # validity
 rm -f /usr/bin/e
 today=`date -d "0 days" +"%Y-%m-%d"`
-valid=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
+valid=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
 echo "$valid" >/usr/bin/e
 # DETAIL ORDER
 username=$(cat /usr/bin/user)
-# oid=$(cat /usr/bin/ver)
+oid=$(cat /usr/bin/ver)
 exp=$(cat /usr/bin/e)
 clear
 # CERTIFICATE STATUS
@@ -130,8 +131,8 @@ sts="${Error}"
 echo -e " $BLUE╭──────────────────────────────────────────────────────────╮${NC}"
 echo -e " $BLUE│$NC$RED    IP address not authorized by admin $NC"
 echo -e " $BLUE│$NC$RED    Please contact admin to rent this script $NC"
-echo -e " $BLUE│$NC$r • $NC$WHITE Whatsapp :$NC $GREEN 62818776240$NC"
-echo -e " $BLUE│$NC$r • $NC$WHITE Telegram :$NC $GREEN erfanrinanda$NC"
+echo -e " $BLUE│$NC$r • $NC$WHITE Whatsapp :$NC $GREEN 6285649455626$NC"
+echo -e " $BLUE│$NC$r • $NC$WHITE Telegram :$NC $GREEN amgeekzssh$NC"
 echo -e " $BLUE╰──────────────────────────────────────────────────────────╯${NC}"
 sleep 3
 exit 1
@@ -141,7 +142,7 @@ fi
 echo -e "\e[32mloading...\e[0m"
 clear
 # REPO    
-    REPO="https://raw.githubusercontent.com/ngedot/botol/master/"
+    REPO="https://raw.githubusercontent.com/amgeekz/vip/master/"
 
 ####
 start=$(date +%s)
@@ -185,14 +186,10 @@ function is_root() {
 # Buat direktori xray
 print_install "Membuat direktori xray"
     mkdir -p /etc/xray
-    wget https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi -O /etc/xray/premium
-    curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 > /etc/xray/ipvps
-    curl -s ipinfo.io/city?token=22bdf1094ea479 >>/etc/xray/city
-    curl -s ipinfo.io/timezone?token=22bdf1094ea479 >>/etc/xray/timezone
-    curl -s ipinfo.io/org?token=22bdf1094ea479 | cut -d " " -f 2-10 >>/etc/xray/isp
+    curl -s ifconfig.me > /etc/xray/ipvps
     touch /etc/xray/domain
     mkdir -p /var/log/xray
-#    chown www-data.www-data /var/log/xray
+    chown www-data.www-data /var/log/xray
     chmod +x /var/log/xray
     touch /var/log/xray/access.log
     touch /var/log/xray/error.log
@@ -213,7 +210,7 @@ print_install "Membuat direktori xray"
     export OS_Name=$( cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME//g' | sed 's/=//g' | sed 's/"//g' )
     export Kernel=$( uname -r )
     export Arch=$( uname -m )
-    export IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
+    export IP=$( curl -s https://ipinfo.io/ip/ )
 
 # Change Environment System
 function first_setup(){
@@ -223,19 +220,19 @@ function first_setup(){
     print_success "Directory Xray"
     if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
     echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    apt update -y
+    sudo apt update -y
     apt-get install --no-install-recommends software-properties-common
-    add-apt-repository ppa:vbernat/haproxy-3.0 -y
-    apt-get -y install haproxy #=3.0.\*
+    add-apt-repository ppa:vbernat/haproxy-2.0 -y
+    apt-get -y install haproxy=2.0.\*
 elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
     echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
     curl https://haproxy.debian.net/bernat.debian.org.gpg |
         gpg --dearmor >/usr/share/keyrings/haproxy.debian.net.gpg
     echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" \
-        http://haproxy.debian.net buster-backports-2.6 main \
+        http://haproxy.debian.net buster-backports-1.8 main \
         >/etc/apt/sources.list.d/haproxy.list
-    apt update
-    apt-get -y install haproxy #=2.6.\*
+    sudo apt-get update
+    apt-get -y install haproxy=1.8.\*
 else
     echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
     exit 1
@@ -249,7 +246,7 @@ function nginx_install() {
     if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
         print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         # // sudo add-apt-repository ppa:nginx/stable -y 
-        apt install nginx -y 
+        sudo apt-get install nginx -y 
     elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
         print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
         apt -y install nginx 
@@ -264,7 +261,7 @@ function base_package() {
     clear
     ########
     print_install "Menginstall Packet Yang Dibutuhkan"
-    apt install zip pwgen openssl socat cron bash-completion chrony -y
+    apt install zip pwgen openssl netcat socat cron bash-completion -y
     apt install figlet -y
     apt update -y
     apt upgrade -y
@@ -278,15 +275,15 @@ function base_package() {
     apt install ntpdate -y
     ntpdate pool.ntp.org
     apt install sudo -y
-    apt clean all
-    apt autoremove -y
-    apt install -y debconf-utils
-    apt remove --purge exim4 -y
-    apt remove --purge ufw firewalld -y
-    apt install -y --no-install-recommends software-properties-common
+    sudo apt-get clean all
+    sudo apt-get autoremove -y
+    sudo apt-get install -y debconf-utils
+    sudo apt-get remove --purge exim4 -y
+    sudo apt-get remove --purge ufw firewalld -y
+    sudo apt-get install -y --no-install-recommends software-properties-common
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    apt install -y nginx vnstat libnss3-dev netfilter-persistent libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-openssl-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python3 htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
+    sudo apt-get install -y speedtest-cli vnstat libnss3-dev libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-nss-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
     print_success "Packet Yang Dibutuhkan"
     
 }
@@ -324,8 +321,8 @@ clear
 clear
 #GANTI PASSWORD DEFAULT
 function restart_system() {
-    USRSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $2}')
-    EXPSC=$(curl -sS https://raw.githubusercontent.com/ngedot/botol/main/Aktivasi | grep $MYIP | awk '{print $3}')
+    USRSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $2}')
+    EXPSC=$(curl -sS https://raw.githubusercontent.com/amgeekz/vip/master/izin | grep $MYIP | awk '{print $3}')
     DATEVPS=$(date +'%d/%m/%Y')
     ISP=$(cat /etc/xray/isp)
     TIMEZONE=$(printf '%(%H:%M:%S)T')
@@ -416,7 +413,7 @@ rm -rf /etc/vmess/.vmess.db
 #Instal Xray
 function install_xray() {
 clear
-    print_install "Core Xray 1.8.24 Latest Version"
+    print_install "Core Xray 1.8.1 Latest Version"
     # install xray
     #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
     domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
@@ -424,8 +421,7 @@ clear
     
     # / / Ambil Xray Core Version Terbaru
 latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-#bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
-bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version 1.8.24
+bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
  
     # // Ambil Config Server
     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
@@ -433,8 +429,8 @@ bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release
     wget -O /etc/systemd/system/runn.service "${REPO}limit/runn.service" >/dev/null 2>&1
     #chmod +x /usr/local/bin/xray
     domain=$(cat /etc/xray/domain)
-    IPVS=$(cat /etc/xray/ipvps)
-    print_success "Core Xray 1.8.24 Latest Version"
+    IPVPS=$(cat /etc/xray/ipvps)
+    print_success "Core Xray 1.8.1 Latest Version"
     
     # Settings UP Nginix Server
     clear
@@ -553,7 +549,7 @@ print_success "Password SSH"
 function udp_mini(){
 clear
 print_install "Memasang Service Limit Quota"
-wget raw.githubusercontent.com/ngedot/botol/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
+wget raw.githubusercontent.com/amgeekz/vip/master/limit/limit.sh && chmod +x limit.sh && ./limit.sh
 
 cd
 wget -q -O /usr/bin/limit-ip "${REPO}limit/limit-ip"
@@ -670,35 +666,32 @@ wget -q -O /etc/default/dropbear "${REPO}limit/dropbear.conf"
 chmod +x /etc/default/dropbear
 /etc/init.d/dropbear restart
 /etc/init.d/dropbear status
-systemctl enable vnstat
-/etc/init.d/vnstat restart
-/etc/init.d/vnstat status
 print_success "Dropbear"
 }
 
 clear
-# function ins_vnstat(){
-# clear
-# print_install "Menginstall Vnstat"
-# # setting vnstat
-# apt -y install vnstat > /dev/null 2>&1
-# /etc/init.d/vnstat restart
-# apt -y install libsqlite3-dev > /dev/null 2>&1
-# wget https://humdi.net/vnstat/vnstat-2.11.tar.gz
-# tar zxvf vnstat-2.11.tar.gz
-# cd vnstat-2.11
-# ./configure --prefix=/usr --sysconfdir=/etc && make && make install
-# cd
-# vnstat -u -i $NET
-# sed -i 's/Interface "'""eth0""'"/Interface "'""$NET""'"/g' /etc/vnstat.conf
-# chown vnstat:vnstat /var/lib/vnstat -R
-# systemctl enable vnstat
-# /etc/init.d/vnstat restart
-# /etc/init.d/vnstat status
-# rm -f /root/vnstat-2.11.tar.gz
-# rm -rf /root/vnstat-2.11
-# print_success "Vnstat"
-# }
+function ins_vnstat(){
+clear
+print_install "Menginstall Vnstat"
+# setting vnstat
+apt -y install vnstat > /dev/null 2>&1
+/etc/init.d/vnstat restart
+apt -y install libsqlite3-dev > /dev/null 2>&1
+wget https://humdi.net/vnstat/vnstat-2.6.tar.gz
+tar zxvf vnstat-2.6.tar.gz
+cd vnstat-2.6
+./configure --prefix=/usr --sysconfdir=/etc && make && make install
+cd
+vnstat -u -i $NET
+sed -i 's/Interface "'""eth0""'"/Interface "'""$NET""'"/g' /etc/vnstat.conf
+chown vnstat:vnstat /var/lib/vnstat -R
+systemctl enable vnstat
+/etc/init.d/vnstat restart
+/etc/init.d/vnstat status
+rm -f /root/vnstat-2.6.tar.gz
+rm -rf /root/vnstat-2.6
+print_success "Vnstat"
+}
 
 function ins_openvpn(){
 clear
@@ -725,8 +718,7 @@ cd
 rm -rf wondershaper
 echo > /home/limit
 apt install msmtp-mta ca-certificates bsd-mailx -y
-# Buat file konfigurasi msmtp
-cat <<EOF > /etc/msmtprc
+cat<<EOF>>/etc/msmtprc
 defaults
 tls on
 tls_starttls on
@@ -736,32 +728,32 @@ account default
 host smtp.gmail.com
 port 587
 auth on
-user serverkubackup@gmail.com
-from serverkubackup@gmail.com
-password serverkubackup2023
+user oceantestdigital@gmail.com
+from oceantestdigital@gmail.com
+password jokerman77 
 logfile ~/.msmtp.log
 EOF
-
-# Set izin untuk file msmtprc
 chown -R www-data:www-data /etc/msmtprc
-chmod 600 /etc/msmtprc
+wget -q -O /etc/ipserver "${REPO}limit/ipserver" && bash /etc/ipserver
+print_success "Backup Server"
+}
 
 clear
 function ins_swab(){
 clear
-# print_install "Memasang Swap 1 G"
-# gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-#     gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
-#     curl -sL "$gotop_link" -o /tmp/gotop.deb
-#     dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+print_install "Memasang Swap 1 G"
+gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
+    gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+    curl -sL "$gotop_link" -o /tmp/gotop.deb
+    dpkg -i /tmp/gotop.deb >/dev/null 2>&1
     
-#         # > Buat swap sebesar 1G
-#     dd if=/dev/zero of=/swapfile bs=1024 count=1048576
-#     mkswap /swapfile
-#     chown root:root /swapfile
-#     chmod 0600 /swapfile >/dev/null 2>&1
-#     swapon /swapfile >/dev/null 2>&1
-#     sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
+        # > Buat swap sebesar 1G
+    dd if=/dev/zero of=/swapfile bs=1024 count=1048576
+    mkswap /swapfile
+    chown root:root /swapfile
+    chmod 0600 /swapfile >/dev/null 2>&1
+    swapon /swapfile >/dev/null 2>&1
+    sed -i '$ i\/swapfile      swap swap   defaults    0 0' /etc/fstab
 
     # > Singkronisasi jam
     chronyd -q 'server 0.id.pool.ntp.org iburst'
@@ -769,16 +761,16 @@ clear
     chronyc tracking -v
     
     wget ${REPO}limit/bbr.sh &&  chmod +x bbr.sh && ./bbr.sh
-# print_success "Swap 1 G"
+print_success "Swap 1 G"
 }
 
 function ins_Fail2ban(){
 clear
 print_install "Menginstall Fail2ban"
-apt -y install fail2ban > /dev/null 2>&1
-sudo systemctl enable --now fail2ban
-/etc/init.d/fail2ban restart
-/etc/init.d/fail2ban status
+#apt -y install fail2ban > /dev/null 2>&1
+#sudo systemctl enable --now fail2ban
+#/etc/init.d/fail2ban restart
+#/etc/init.d/fail2ban status
 
 # Instal DDOS Flate
 if [ -d '/usr/local/ddos' ]; then
@@ -885,18 +877,18 @@ function menu(){
 }
 
 # Membaut Default Menu 
-# function profile(){
-# clear
-#     cat >/root/.profile <<EOF
-# # ~/.profile: executed by Bourne-compatible login shells.
-# if [ "$BASH" ]; then
-#     if [ -f ~/.bashrc ]; then
-#         . ~/.bashrc
-#     fi
-# fi
-# mesg n || true
-# menu
-# EOF
+function profile(){
+clear
+    cat >/root/.profile <<EOF
+# ~/.profile: executed by Bourne-compatible login shells.
+if [ "$BASH" ]; then
+    if [ -f ~/.bashrc ]; then
+        . ~/.bashrc
+    fi
+fi
+mesg n || true
+menu
+EOF
 
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
