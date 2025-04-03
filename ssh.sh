@@ -683,23 +683,36 @@ wget ${REPO}limit/openvpn &&  chmod +x openvpn && ./openvpn
 print_success "OpenVPN"
 }
 
-function ins_backup(){
-clear
-print_install "Memasang Backup Server"
-#BackupOption
-apt install rclone -y
-printf "q\n" | rclone config
-wget -O /root/.config/rclone/rclone.conf "${REPO}limit/rclone.conf"
-#Install Wondershaper
-cd /bin
-git clone  https://github.com/magnific0/wondershaper.git
-cd wondershaper
-sudo make install
-cd
-rm -rf wondershaper
-echo > /home/limit
-apt install msmtp-mta ca-certificates bsd-mailx -y
-cat<<EOF >/etc/msmtprc
+# Fungsi untuk menginstal rclone
+function install_rclone() {
+    clear
+    print_install "Menginstal Rclone"
+    apt install rclone -y
+    printf "q\n" | rclone config
+    wget -O /root/.config/rclone/rclone.conf "${REPO}limit/rclone.conf"
+    print_success "Rclone berhasil diinstal"
+}
+
+# Fungsi untuk menginstal Wondershaper
+function install_wondershaper() {
+    clear
+    print_install "Menginstal Wondershaper"
+    cd /bin
+    git clone https://github.com/magnific0/wondershaper.git
+    cd wondershaper
+    sudo make install
+    cd
+    rm -rf wondershaper
+    echo > /home/limit
+    print_success "Wondershaper berhasil diinstal"
+}
+
+# Fungsi untuk menginstal msmtp
+function install_msmtp() {
+    clear
+    print_install "Menginstal msmtp"
+    apt install msmtp-mta ca-certificates bsd-mailx -y
+    cat <<EOF >/etc/msmtprc
 defaults
 tls on
 tls_starttls on
@@ -711,14 +724,33 @@ port 587
 auth on
 user serverkubackup@gmail.com
 from serverkubackup@gmail.com
-password serverkubackup 2023 
+password serverkubackup 2023
 logfile ~/.msmtp.log
 EOF
-chown -R www-data:www-data /etc/msmtprc
-wget -q -O /etc/ipserver "${REPO}limit/ipserver" && bash /etc/ipserver
-print_success "Backup Server"
+    chown -R www-data:www-data /etc/msmtprc
+    print_success "msmtp berhasil diinstal"
 }
 
+# Fungsi untuk menjalankan skrip ipserver
+function run_ipserver() {
+    clear
+    print_install "Menjalankan skrip ipserver"
+    wget -q -O /etc/ipserver "${REPO}limit/ipserver" && bash /etc/ipserver
+    print_success "Skrip ipserver berhasil dijalankan"
+}
+
+# Fungsi utama untuk menginstal backup server
+function ins_backup() {
+    clear
+    print_install "Memasang Backup Server"
+    install_rclone
+    install_wondershaper
+    install_msmtp
+    run_ipserver
+    print_success "Backup Server berhasil dipasang"
+}
+
+# Fungsi untuk menginstal gotop
 clear
 function install_gotop() {
     clear
