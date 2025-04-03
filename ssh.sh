@@ -370,46 +370,24 @@ print_install "Memasang SSL Pada Domain"
 }
 
 function make_folder_xray() {
-    # rm -rf /etc/vmess/.vmess.db
-    # rm -rf /etc/vless/.vless.db
-    # rm -rf /etc/trojan/.trojan.db
-    # rm -rf /etc/shadowsocks/.shadowsocks.db
     rm -rf /etc/ssh/.ssh.db
     rm -rf /etc/bot/.bot.db
     mkdir -p /etc/bot
     mkdir -p /etc/xray
-    # mkdir -p /etc/vmess
-    # mkdir -p /etc/vless
-    # mkdir -p /etc/trojan
-    # mkdir -p /etc/shadowsocks
     mkdir -p /etc/ssh
     mkdir -p /usr/bin/xray/
     mkdir -p /var/log/xray/
     mkdir -p /var/www/html
-    # mkdir -p /etc/kyt/limit/vmess/ip
-    # mkdir -p /etc/kyt/limit/vless/ip
-    # mkdir -p /etc/kyt/limit/trojan/ip
     mkdir -p /etc/kyt/limit/ssh/ip
-    # mkdir -p /etc/limit/vmess
-    # mkdir -p /etc/limit/vless
-    # mkdir -p /etc/limit/trojan
     mkdir -p /etc/limit/ssh
     chmod +x /var/log/xray
     touch /etc/xray/domain
     touch /var/log/xray/access.log
     touch /var/log/xray/error.log
-    # touch /etc/vmess/.vmess.db
-    # touch /etc/vless/.vless.db
-    # touch /etc/trojan/.trojan.db
-    # touch /etc/shadowsocks/.shadowsocks.db
     touch /etc/ssh/.ssh.db
     touch /etc/bot/.bot.db
-    # echo "& plughin Account" >>/etc/vmess/.vmess.db
-    # echo "& plughin Account" >>/etc/vless/.vless.db
-    # echo "& plughin Account" >>/etc/trojan/.trojan.db
-    # echo "& plughin Account" >>/etc/shadowsocks/.shadowsocks.db
     echo "& plughin Account" >>/etc/ssh/.ssh.db
-    }
+}
 # #Instal Xray
 # function install_xray() {
 # clear
@@ -432,18 +410,18 @@ function make_folder_xray() {
 #     IPVPS=$(cat /etc/xray/ipvps)
 #     print_success "Core Xray Latest Version"
     
-#     # Settings UP Nginix Server
-#     clear
-#     curl -s ipinfo.io/city >>/etc/xray/city
-#     curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
-#     print_install "Memasang Konfigurasi Packet"
-#     wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
-#     wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
-#     sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
-#     sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
-#     curl ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
+    # Settings UP Nginix Server
+    clear
+    curl -s ipinfo.io/city >>/etc/xray/city
+    curl -s ipinfo.io/org | cut -d " " -f 2-10 >>/etc/xray/isp
+    print_install "Memasang Konfigurasi Packet"
+    wget -O /etc/haproxy/haproxy.cfg "${REPO}limit/haproxy.cfg" >/dev/null 2>&1
+    wget -O /etc/nginx/conf.d/xray.conf "${REPO}limit/xray.conf" >/dev/null 2>&1
+    sed -i "s/xxx/${domain}/g" /etc/haproxy/haproxy.cfg
+    sed -i "s/xxx/${domain}/g" /etc/nginx/conf.d/xray.conf
+    curl ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
     
-# cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
+cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
 
 #     # > Set Permission
 #     chmod +x /etc/systemd/system/runn.service
@@ -721,7 +699,7 @@ cd
 rm -rf wondershaper
 echo > /home/limit
 apt install msmtp-mta ca-certificates bsd-mailx -y
-cat<<EOF>>/etc/msmtprc
+cat<<EOF >/etc/msmtprc
 defaults
 tls on
 tls_starttls on
