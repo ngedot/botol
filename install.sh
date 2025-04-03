@@ -58,6 +58,7 @@ if [[ $IP == "" ]]; then
     echo -e "${EROR} IP Address ( ${YELLOW}Not Detected${NC} )"
 else
     echo -e "${OK} IP Address ( ${green}$IP${NC} )"
+fi
 if [[ -z $IP ]]; then
     echo -e "${ERROR} IP Address ( ${YELLOW}Not Detected${NC} )"
 else
@@ -984,17 +985,14 @@ print_install "Enable Service"
 }
 
 # Fingsi Install Script
-function instal(){
-clear
-    first_setup
-    nginx_install
-function instal(){
+function instal() {
     clear
     first_setup
     nginx_install
     base_package
     make_folder_xray
     pasang_domain
+    password_default
     pasang_ssl
     install_xray
     ssh
@@ -1002,15 +1000,23 @@ function instal(){
     ssh_slow
     ins_SSHD
     ins_dropbear
+    ins_vnstat
     ins_openvpn
     ins_backup
+    ins_swab
     ins_Fail2ban
     ins_epro
     ins_restart
     menu
+    profile
     enable_services
     restart_system
 }
+
+instal
+echo ""
+history -c
+rm -rf /root/menu
 rm -rf /root/*.zip
 rm -rf /root/*.sh
 rm -rf /root/LICENSE
