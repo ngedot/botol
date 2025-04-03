@@ -212,81 +212,37 @@ print_install "Membuat direktori xray"
     export Arch=$( uname -m )
     export IP=$(curl -s https://ipinfo.io/ip/?token=22bdf1094ea479 )
 
-# Change Environment System
-function first_setup(){
+# Function: First Setup
+function first_setup() {
     timedatectl set-timezone Asia/Jakarta
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    print_success "Directory Xray"
-    OS_ID=$(cat /etc/os-release | grep -w ID | head -n1 | sed 's/ID=//g' | sed 's/"//g')
-    OS_VERSION=$(cat /etc/os-release | grep -w VERSION_ID | head -n1 | sed 's/VERSION_ID=//g' | sed 's/"//g')
-
-    if [[ "$OS_ID" == "ubuntu" && "$OS_VERSION" == "24.04" ]]; then
-        echo "Setup Dependencies for Ubuntu 24.04"
-        sudo apt update -y
-        sudo apt install --no-install-recommends software-properties-common -y
-        sudo add-apt-repository ppa:vbernat/haproxy-3.0 -y
-        sudo apt-get -y install haproxy=3.0.\*
-    elif [[ "$OS_ID" == "ubuntu" ]]; then
-        echo "Setup Dependencies for Ubuntu $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g')"
-        sudo apt update -y
-        sudo apt install --no-install-recommends software-properties-common -y
-        sudo add-apt-repository ppa:vbernat/haproxy-3.0 -y
-        sudo apt-get -y install haproxy=3.0.\*
-    else
-        echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g'))"
-        exit 1
-    fi
+    echo -e "${OK} Timezone and iptables-persistent configured"
 }
 
-# GEO PROJECT
-function nginx_install() {
-    # Checking System
-    OS_ID=$(cat /etc/os-release | grep -w ID | head -n1 | sed 's/ID=//g' | sed 's/"//g')
-    OS_VERSION=$(cat /etc/os-release | grep -w VERSION_ID | head -n1 | sed 's/VERSION_ID=//g' | sed 's/"//g')
-
-    if [[ "$OS_ID" == "ubuntu" && "$OS_VERSION" == "24.04" ]]; then
-        print_install "Setup nginx for Ubuntu 24.04"
-        sudo apt install nginx -y
-    elif [[ "$OS_ID" == "ubuntu" ]]; then
-        print_install "Setup nginx for Ubuntu $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g')"
-        sudo apt install nginx -y
-    else
-        echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g'))"
-        exit 1
-    fi
-}
-
-# Update and remove packages
-function base_package() {
-    clear
-    ########
-    print_install "Menginstall Packet Yang Dibutuhkan"
-    apt install zip pwgen openssl socat cron bash-completion chrony -y
-    apt install figlet -y
+# Function: Install HAProxy
+function install_haproxy() {
+    add-apt-repository ppa:vbernat/haproxy-3.0 -y
     apt update -y
-    apt upgrade -y
-    apt dist-upgrade -y
-    systemctl enable chronyd
-    systemctl restart chronyd
-    systemctl enable chrony
-    systemctl restart chrony
-    chronyc sourcestats -v
-    chronyc tracking -v
-    apt install ntpdate -y
-    ntpdate pool.ntp.org
-    apt install sudo -y
-    apt clean all
-    apt autoremove -y
-    apt install -y debconf-utils
-    apt remove --purge exim4 -y
-    apt remove --purge ufw firewalld -y
-    apt install -y --no-install-recommends software-properties-common
-    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
-    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
-    apt install -y nginx vnstat libnss3-dev netfilter-persistent libnspr4-dev pkg-config libpam0g-dev libcap-ng-dev libcap-ng-utils libselinux1-dev libcurl4-openssl-dev flex bison make libnss3-tools libevent-dev bc rsyslog dos2unix zlib1g-dev libssl-dev libsqlite3-dev sed dirmngr libxml-parser-perl build-essential gcc g++ python3 htop lsof tar wget curl ruby zip unzip p7zip-full python3-pip libc6 util-linux build-essential msmtp-mta ca-certificates bsd-mailx iptables iptables-persistent netfilter-persistent net-tools openssl ca-certificates gnupg gnupg2 ca-certificates lsb-release gcc shc make cmake git screen socat xz-utils apt-transport-https gnupg1 dnsutils cron bash-completion ntpdate chrony jq openvpn easy-rsa
-    print_success "Packet Yang Dibutuhkan"
-    
+    apt install -y haproxy=3.0.\*
+    echo -e "${OK} HAProxy 3.0.\* installed"
+}
+
+# Function: Install Nginx
+function install_nginx() {
+    apt install -y nginx
+    echo -e "${OK} Nginx installed"
+}
+
+# Function: Install Base Packages
+function base_package() {
+    apt update -y && apt upgrade -y
+    apt install -y zip pwgen openssl socat cron bash-completion chrony ntpdate sudo \
+        nginx vnstat netfilter-persistent iptables-persistent net-tools \
+        build-essential gcc g++ python3 htop lsof tar wget curl ruby zip unzip \
+        p7zip-full python3-pip libc6 util-linux msmtp-mta ca-certificates \
+        bsd-mailx gnupg gnupg2 lsb-release
+    echo -e "${OK} Base packages installed"
 }
 clear
 # Fungsi input domain
@@ -348,26 +304,35 @@ function restart_system() {
 
 }
 clear
-# Pasang SSL
-function pasang_ssl() {
-clear
-print_install "Memasang SSL Pada Domain"
-    rm -rf /etc/xray/xray.key
-    rm -rf /etc/xray/xray.crt
+# Function: Configure SSL
+function configure_ssl() {
     domain=$(cat /root/domain)
-    STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
-    rm -rf /root/.acme.sh
-    mkdir /root/.acme.sh
-    systemctl stop $STOPWEBSERVER
     systemctl stop nginx
     curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
     chmod +x /root/.acme.sh/acme.sh
     /root/.acme.sh/acme.sh --upgrade --auto-upgrade
     /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
-    /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
-    ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
-    chmod 777 /etc/xray/xray.key
-    print_success "SSL Certificate"
+    /root/.acme.sh/acme.sh --issue -d "$domain" --standalone -k ec-256
+    /root/.acme.sh/acme.sh --installcert -d "$domain" --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
+    chmod 600 /etc/xray/xray.key
+    echo -e "${OK} SSL configured for domain $domain"
+}
+
+# Function: Restart Services
+function restart_services() {
+    systemctl restart nginx
+    systemctl restart haproxy
+    echo -e "${OK} Services restarted"
+}
+
+function install_script() {
+    first_setup
+    base_package
+    install_haproxy
+    install_nginx
+    configure_ssl
+    restart_services
+    echo -e "${Green} Script successfully installed!${NC}"
 }
 
 function make_folder_xray() {
