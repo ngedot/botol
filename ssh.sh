@@ -218,41 +218,42 @@ function first_setup(){
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections
     print_success "Directory Xray"
-    if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-    echo "Setup Dependencies $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    sudo apt update -y
-    apt-get install --no-install-recommends software-properties-common
-    add-apt-repository ppa:vbernat/haproxy-2.0 -y
-    apt-get -y install haproxy=2.0.\*
-elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-    echo "Setup Dependencies For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-    curl https://haproxy.debian.net/bernat.debian.org.gpg |
-        gpg --dearmor >/usr/share/keyrings/haproxy.debian.net.gpg
-    echo deb "[signed-by=/usr/share/keyrings/haproxy.debian.net.gpg]" \
-        http://haproxy.debian.net buster-backports-1.8 main \
-        >/etc/apt/sources.list.d/haproxy.list
-    sudo apt-get update
-    apt-get -y install haproxy=1.8.\*
-else
-    echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g') )"
-    exit 1
-fi
+    OS_ID=$(cat /etc/os-release | grep -w ID | head -n1 | sed 's/ID=//g' | sed 's/"//g')
+    OS_VERSION=$(cat /etc/os-release | grep -w VERSION_ID | head -n1 | sed 's/VERSION_ID=//g' | sed 's/"//g')
+
+    if [[ "$OS_ID" == "ubuntu" && "$OS_VERSION" == "24.04" ]]; then
+        echo "Setup Dependencies for Ubuntu 24.04"
+        sudo apt update -y
+        sudo apt install --no-install-recommends software-properties-common -y
+        sudo add-apt-repository ppa:vbernat/haproxy-3.0 -y
+        sudo apt-get -y install haproxy=3.0.\*
+    elif [[ "$OS_ID" == "ubuntu" ]]; then
+        echo "Setup Dependencies for Ubuntu $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g')"
+        sudo apt update -y
+        sudo apt install --no-install-recommends software-properties-common -y
+        sudo add-apt-repository ppa:vbernat/haproxy-3.0 -y
+        sudo apt-get -y install haproxy=3.0.\*
+    else
+        echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g'))"
+        exit 1
+    fi
 }
 
 # GEO PROJECT
-clear
 function nginx_install() {
-    # // Checking System
-    if [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "ubuntu" ]]; then
-        print_install "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-        # // sudo add-apt-repository ppa:nginx/stable -y 
-        apt install nginx -y 
-    elif [[ $(cat /etc/os-release | grep -w ID | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/ID//g') == "debian" ]]; then
-        print_success "Setup nginx For OS Is $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')"
-        apt -y install nginx 
+    # Checking System
+    OS_ID=$(cat /etc/os-release | grep -w ID | head -n1 | sed 's/ID=//g' | sed 's/"//g')
+    OS_VERSION=$(cat /etc/os-release | grep -w VERSION_ID | head -n1 | sed 's/VERSION_ID=//g' | sed 's/"//g')
+
+    if [[ "$OS_ID" == "ubuntu" && "$OS_VERSION" == "24.04" ]]; then
+        print_install "Setup nginx for Ubuntu 24.04"
+        sudo apt install nginx -y
+    elif [[ "$OS_ID" == "ubuntu" ]]; then
+        print_install "Setup nginx for Ubuntu $(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g')"
+        sudo apt install nginx -y
     else
-        echo -e " Your OS Is Not Supported ( ${YELLOW}$(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/=//g' | sed 's/"//g' | sed 's/PRETTY_NAME//g')${FONT} )"
-        # // exit 1
+        echo -e " Your OS Is Not Supported ($(cat /etc/os-release | grep -w PRETTY_NAME | head -n1 | sed 's/PRETTY_NAME=//g' | sed 's/"//g'))"
+        exit 1
     fi
 }
 
@@ -388,27 +389,6 @@ function make_folder_xray() {
     touch /etc/bot/.bot.db
     echo "& plughin Account" >>/etc/ssh/.ssh.db
 }
-# #Instal Xray
-# function install_xray() {
-# clear
-#     print_install "Core Xray Latest Version"
-#     # install xray
-#     #echo -e "[ ${green}INFO$NC ] Downloading & Installing xray core"
-#     domainSock_dir="/run/xray";! [ -d $domainSock_dir ] && mkdir  $domainSock_dir
-#     chown www-data.www-data $domainSock_dir
-    
-#     # / / Ambil Xray Core Version Terbaru
-# latest_version="$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-# bash -c "$(curl -L https://github.com/XTLS/Xray-install/raw/main/install-release.sh)" @ install -u www-data --version $latest_version
- 
-#     # // Ambil Config Server
-#     wget -O /etc/xray/config.json "${REPO}limit/config.json" >/dev/null 2>&1
-#     #wget -O /usr/local/bin/xray "${REPO}xray/xray.linux.64bit" >/dev/null 2>&1
-#     wget -O /etc/systemd/system/runn.service "${REPO}limit/runn.service" >/dev/null 2>&1
-#     #chmod +x /usr/local/bin/xray
-#     domain=$(cat /etc/xray/domain)
-#     IPVPS=$(cat /etc/xray/ipvps)
-#     print_success "Core Xray Latest Version"
     
     # Settings UP Nginix Server
     clear
@@ -422,34 +402,6 @@ function make_folder_xray() {
     curl ${REPO}limit/nginx.conf > /etc/nginx/nginx.conf
     
 cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
-
-#     # > Set Permission
-#     chmod +x /etc/systemd/system/runn.service
-
-#     # > Create Service
-#     rm -rf /etc/systemd/system/xray.service.d
-#     cat >/etc/systemd/system/xray.service <<EOF
-# Description=Xray Service
-# Documentation=https://github.com
-# After=network.target nss-lookup.target
-
-# [Service]
-# User=www-data
-# CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-# AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
-# NoNewPrivileges=true
-# ExecStart=/usr/local/bin/xray run -config /etc/xray/config.json
-# Restart=on-failure
-# RestartPreventExitStatus=23
-# LimitNPROC=10000
-# LimitNOFILE=1000000
-
-# [Install]
-# WantedBy=multi-user.target
-
-# EOF
-# print_success "Konfigurasi Packet"
-# }
 
 function ssh(){
 clear
@@ -536,60 +488,7 @@ cd /usr/bin
 sed -i 's/\r//' limit-ip
 cd
 clear
-#SERVICE LIMIT ALL IP
-cat >/etc/systemd/system/vmip.service << EOF
-[Unit]
-Description=My
-ProjectAfter=network.target
 
-[Service]
-WorkingDirectory=/root
-ExecStart=/usr/bin/limit-ip vmip
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl daemon-reload
-systemctl restart vmip
-systemctl enable vmip
-
-cat >/etc/systemd/system/vlip.service << EOF
-[Unit]
-Description=My
-ProjectAfter=network.target
-
-[Service]
-WorkingDirectory=/root
-ExecStart=/usr/bin/limit-ip vlip
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl daemon-reload
-systemctl restart vlip
-systemctl enable vlip
-
-cat >/etc/systemd/system/trip.service << EOF
-[Unit]
-Description=My
-ProjectAfter=network.target
-
-[Service]
-WorkingDirectory=/root
-ExecStart=/usr/bin/limit-ip trip
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl daemon-reload
-systemctl restart trip
-systemctl enable trip
-#SERVICE LIMIT QUOTA
-
-#SERVICE VMESS
 # // Installing UDP Mini
 mkdir -p /usr/local/kyt/
 wget -q -O /usr/local/kyt/udp-mini "${REPO}limit/udp-mini"
@@ -651,28 +550,6 @@ print_success "Dropbear"
 }
 
 clear
-# function ins_vnstat(){
-# clear
-# print_install "Menginstall Vnstat"
-# # setting vnstat
-# apt -y install vnstat > /dev/null 2>&1
-# /etc/init.d/vnstat restart
-# apt -y install libsqlite3-dev > /dev/null 2>&1
-# wget https://humdi.net/vnstat/vnstat-2.11.tar.gz
-# tar zxvf vnstat-2.11.tar.gz
-# cd vnstat-2.11
-# ./configure --prefix=/usr --sysconfdir=/etc && make && make install
-# cd
-# vnstat -u -i $NET
-# sed -i 's/Interface "'""eth0""'"/Interface "'""$NET""'"/g' /etc/vnstat.conf
-# chown vnstat:vnstat /var/lib/vnstat -R
-# systemctl enable vnstat
-# /etc/init.d/vnstat restart
-# /etc/init.d/vnstat status
-# rm -f /root/vnstat-2.11.tar.gz
-# rm -rf /root/vnstat-2.11
-# print_success "Vnstat"
-# }
 
 function ins_openvpn(){
 clear
@@ -895,20 +772,6 @@ function menu(){
     rm -rf menu.zip
 }
 
-# Membaut Default Menu 
-#function profile(){
-#clear
-#    cat >/root/.profile <<EOF
-# ~/.profile: executed by Bourne-compatible login shells.
-#if [ "$BASH" ]; then
-#    if [ -f ~/.bashrc ]; then
-#        . ~/.bashrc
-#    fi
-#fi
-#mesg n || true
-#menu
-#EOF
-
 cat >/etc/cron.d/xp_all <<-END
 		SHELL=/bin/sh
 		PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
@@ -971,7 +834,6 @@ EOF
         TIME_DATE="AM"
     fi
 print_success "Menu Packet"
-}
 
 # Restart layanan after install
 function enable_services(){
