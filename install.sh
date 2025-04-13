@@ -617,10 +617,10 @@ print_success "Backup Server"
 clear
 function ins_gotop(){
 print_install "Memasang Gotop"
-gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases | grep tag_name | sed -E 's/.*"v(.*)".*/\1/' | head -n 1)"
-gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v$gotop_latest/gotop_v"$gotop_latest"_linux_amd64.deb"
+gotop_latest="$(curl -s https://api.github.com/repos/xxxserxxx/gotop/releases/latest | grep tag_name | cut -d '"' -f4 | sed 's/^v//')"
+gotop_link="https://github.com/xxxserxxx/gotop/releases/download/v${gotop_latest}/gotop_v${gotop_latest}_linux_amd64.deb"
 curl -sL "$gotop_link" -o /tmp/gotop.deb
-dpkg -i /tmp/gotop.deb >/dev/null 2>&1
+sudo dpkg -i /tmp/gotop.deb >/dev/null 2>&1 || sudo apt install -f -y
 chronyd -q 'server 0.id.pool.ntp.org iburst'
 chronyc sourcestats -v
 chronyc tracking -v
