@@ -223,29 +223,45 @@ function restart_system() {
 clear
 # Pasang SSL
 function pasang_ssl() {
-clear
-print_install "Memasang SSL Pada Domain"
+    clear
+    print_install "Memasang SSL Pada Domain"
     rm -rf /etc/xray/xray.key
     rm -rf /etc/xray/xray.crt
+
     if [ -f /root/domain ]; then
         domain=$(cat /root/domain)
     else
         read -p "Enter domain: " domain
         echo "$domain" > /root/domain
     fi
+
     STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
     rm -rf /root/.acme.sh
     mkdir /root/.acme.sh
+
     if [ -n "$STOPWEBSERVER" ]; then
         systemctl stop "$STOPWEBSERVER"
     fi
     systemctl stop nginx
+
+    # Daftarkan akun dengan email
     curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
     chmod +x /root/.acme.sh/acme.sh
-    /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
-    /root/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
-    chmod 777 /etc/xray/xray.key
-    print_success "SSL Certificate"
+    /root/.acme.sh/acme.sh --register-account -m serverkubackup@gmail.com
+
+    # Generate sertifikat SSL
+    /root/.acme.sh/acme.sh --issue -d "$domain" --standalone -k ec-256
+    /root/.acme.sh/acme.sh --installcert -d "$domain" \
+        --fullchainpath /etc/xray/xray.crt \
+        --keypath /etc/xray/xray.key --ecc
+
+    if [ -f /etc/xray/xray.key ] && [ -f /etc/xray/xray.crt ]; then
+        chmod 600 /etc/xray/xray.key
+        chmod 600 /etc/xray/xray.crt
+        print_success "SSL Certificate berhasil dipasang"
+    else
+        print_error "Gagal memasang SSL Certificate"
+    fi
 }
 
 function make_folder_xray() {
@@ -606,9 +622,9 @@ account default
 host smtp.gmail.com
 port 587
 auth on
-user oceantestdigital@gmail.com
-from oceantestdigital@gmail.com
-password jokerman77 
+user serverkubackup@gmail.com
+from serverkubackup@gmail.com
+password serverkubackup 2023 
 logfile ~/.msmtp.log
 EOF
 chown -R www-data:www-data /etc/msmtprc
@@ -841,6 +857,7 @@ clear
     ins_backup
     ins_Fail2ban
     ins_epro
+    ins_gotop
     ins_restart
     menu
     profile
@@ -854,9 +871,9 @@ rm -rf /root/menu
 rm -rf /root/*.zip
 rm -rf /root/*.sh
 read -p "Enter hostname: " username
-sudo hostnamectl set-hostname "$username"
+#sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
-sudo hostnamectl set-hostname "$username"
+#sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
 rm -rf /root/domain
 secs_to_human "$(($(date +%s) - ${start}))"
