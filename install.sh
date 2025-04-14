@@ -857,6 +857,7 @@ clear
     ins_backup
     ins_Fail2ban
     ins_epro
+    ins_gotop
     ins_restart
     menu
     profile
