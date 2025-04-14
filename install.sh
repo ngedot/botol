@@ -1,7 +1,7 @@
 #!/bin/bash
 ### Color
-apt upgrade -y
 apt update -y
+apt upgrade -y
 apt install lolcat -y
 apt install wondershaper -y
 Green="\e[92;1m"
@@ -11,7 +11,7 @@ BLUE="\033[36m"
 FONT="\033[0m"
 GREENBG="\033[42;37m"
 REDBG="\033[41;37m"
-OK="${Green}--->${FONT}"
+OK="${GREEN}--->${FONT}"
 ERROR="${RED}[ERROR]${FONT}"
 GRAY="\e[1;30m"
 WHITE='\033[0;37m'
@@ -825,7 +825,6 @@ clear
     base_package
     make_folder_xray
     pasang_domain
-    password_default
     pasang_ssl
     install_xray
     ssh
@@ -836,7 +835,6 @@ clear
     ins_vnstat
     ins_openvpn
     ins_backup
-    ins_swab
     ins_Fail2ban
     ins_epro
     ins_restart
