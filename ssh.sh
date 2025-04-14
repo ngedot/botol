@@ -1,32 +1,30 @@
 #!/bin/bash
 ### Color
-apt upgrade -y
-apt update -y
-apt install lolcat -y
-apt install wondershaper -y
-Green="\e[92;1m"
-RED="\033[31m"
-YELLOW="\033[33m"
-BLUE="\033[36m"
-FONT="\033[0m"
-GREENBG="\033[42;37m"
-REDBG="\033[41;37m"
-OK="${Green}--->${FONT}"
+apt update -y && apt upgrade -y
+apt install -y lolcat wondershaper curl wget unzip gnupg software-properties-common
+GREEN="\e[92;1m"
+RED="\e[31m"
+YELLOW="\e[33m"
+BLUE="\e[36m"
+FONT="\e[0m"
+GREENBG="\e[42;37m"
+REDBG="\e[41;37m"
+OK="${GREEN}--->${FONT}"
 ERROR="${RED}[ERROR]${FONT}"
 GRAY="\e[1;30m"
-WHITE='\033[0;37m'
-NC='\e[0m'
-red='\e[1;31m'
-green='\e[0;32m'
+WHITE="\e[0;37m"
+NC="\e[0m"
+RED='\e[1;31m'
+GREEN='\e[0;32m'
 TIMES="10"
-CHATID=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 3)
-KEY=$(grep -E "^#bot# " "/etc/bot/.bot.db" | cut -d ' ' -f 2)
-URL="https://api.telegram.org/bot$KEY/sendMessage"
+CHATID=$(awk '/^#bot#/ {print $3}' /etc/bot/.bot.db)
+KEY=$(awk '/^#bot#/ {print $2}' /etc/bot/.bot.db)
+URL="https://api.telegram.org/bot${KEY}/sendMessage"
 # ===================
 clear
   # // Exporint IP AddressInformation
 #// export IP=$( curl -sS ipv4.icanhazip.com ) //
-IP=$(wget -qO- ipinfo.io/ip)
+IP=$(curl -s ipinfo.io/ip)
 clear
 # REPO    
     REPO="https://raw.githubusercontent.com/ngedot/botol/master/"
@@ -52,12 +50,10 @@ function print_error() {
 }
 
 function print_success() {
-    if [[ 0 -eq $? ]]; then
-		echo -e "${green} =============================== ${FONT}"
-        echo -e "${Green} # $1 berhasil dipasang"
-		echo -e "${green} =============================== ${FONT}"
-        sleep 2
-    fi
+    echo -e "${GREEN} =============================== ${FONT}"
+    echo -e "${GREEN} # $1 berhasil dipasang ${FONT}"
+    echo -e "${GREEN} =============================== ${FONT}"
+    sleep 2
 }
 
 ### Cek root
@@ -66,9 +62,12 @@ function is_root() {
         print_ok "Root user Start installation process"
     else
         print_error "The current user is not the root user, please switch to the root user and run the script again"
+        exit 1
     fi
-
 }
+
+# Ensure the script is run as root
+is_root
 
 # Buat direktori xray
 print_install "Membuat direktori xray"
@@ -78,8 +77,8 @@ print_install "Membuat direktori xray"
     mkdir -p /var/log/xray
     chown www-data.www-data /var/log/xray
     chmod +x /var/log/xray
-    touch /var/log/xray/access.log
-    touch /var/log/xray/error.log
+    chown www-data:www-data /var/log/xray
+    chmod 755 /var/log/xray
     mkdir -p /var/lib/kyt >/dev/null 2>&1
     # // Ram Information
     while IFS=":" read -r a b; do
@@ -155,8 +154,8 @@ function base_package() {
     apt install sudo -y
     sudo apt-get clean all
     sudo apt-get autoremove -y
-    sudo apt-get install -y debconf-utils
-    sudo apt-get remove --purge exim4 -y
+    apt-get clean
+    apt-get autoremove -y
     sudo apt-get remove --purge ufw firewalld -y
     sudo apt-get install -y --no-install-recommends software-properties-common
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debconf-set-selections
@@ -228,18 +227,23 @@ clear
 print_install "Memasang SSL Pada Domain"
     rm -rf /etc/xray/xray.key
     rm -rf /etc/xray/xray.crt
-    domain=$(cat /root/domain)
+    if [ -f /root/domain ]; then
+        domain=$(cat /root/domain)
+    else
+        read -p "Enter domain: " domain
+        echo "$domain" > /root/domain
+    fi
     STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
     rm -rf /root/.acme.sh
     mkdir /root/.acme.sh
-    systemctl stop $STOPWEBSERVER
+    if [ -n "$STOPWEBSERVER" ]; then
+        systemctl stop "$STOPWEBSERVER"
+    fi
     systemctl stop nginx
     curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
     chmod +x /root/.acme.sh/acme.sh
-    /root/.acme.sh/acme.sh --upgrade --auto-upgrade
-    /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
-    ~/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
+    /root/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
     chmod 777 /etc/xray/xray.key
     print_success "SSL Certificate"
 }
@@ -427,7 +431,7 @@ wget "${REPO}limit/limit.sh" && chmod +x limit.sh && ./limit.sh
 
 cd
 wget -q -O /usr/bin/limit-ip "${REPO}limit/limit-ip"
-chmod +x /usr/bin/*
+chmod +x /usr/bin/limit-ip
 cd /usr/bin
 sed -i 's/\r//' limit-ip
 cd
@@ -825,7 +829,6 @@ clear
     base_package
     make_folder_xray
     pasang_domain
-    password_default
     pasang_ssl
     install_xray
     ssh
@@ -836,7 +839,6 @@ clear
     ins_vnstat
     ins_openvpn
     ins_backup
-    ins_swab
     ins_Fail2ban
     ins_epro
     ins_restart
@@ -851,13 +853,12 @@ history -c
 rm -rf /root/menu
 rm -rf /root/*.zip
 rm -rf /root/*.sh
-rm -rf /root/LICENSE
+read -p "Enter hostname: " username
+sudo hostnamectl set-hostname "$username"
+rm -rf /root/README.md
+sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
 rm -rf /root/domain
-#sudo hostnamectl set-hostname $user
 secs_to_human "$(($(date +%s) - ${start}))"
-sudo hostnamectl set-hostname $username
-echo -e "${green} Script Successfull Installed"
-echo ""
 read -p "$( echo -e "Press ${YELLOW}[ ${NC}${YELLOW}Enter${NC} ${YELLOW}]${NC} For Reboot") "
 reboot
