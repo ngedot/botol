@@ -240,6 +240,8 @@ print_install "Memasang SSL Pada Domain"
         systemctl stop "$STOPWEBSERVER"
     fi
     systemctl stop nginx
+    curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
+    chmod +x /root/.acme.sh/acme.sh
     /root/.acme.sh/acme.sh --issue -d $domain --standalone -k ec-256
     /root/.acme.sh/acme.sh --installcert -d $domain --fullchainpath /etc/xray/xray.crt --keypath /etc/xray/xray.key --ecc
     chmod 777 /etc/xray/xray.key
