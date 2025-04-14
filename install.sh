@@ -870,9 +870,9 @@ rm -rf /root/menu
 rm -rf /root/*.zip
 rm -rf /root/*.sh
 read -p "Enter hostname: " username
-sudo hostnamectl set-hostname "$username"
+#sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
-sudo hostnamectl set-hostname "$username"
+#sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
 rm -rf /root/domain
 secs_to_human "$(($(date +%s) - ${start}))"
