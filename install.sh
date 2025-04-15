@@ -224,44 +224,45 @@ clear
 # Pasang SSL
 function pasang_ssl() {
     clear
-    print_install "Memasang SSL Pada Domain"
+    echo -e "${GREEN}===============================${NC}"
+    echo -e "${YELLOW}# Memasang SSL Input Manual ${NC}"
+    echo -e "${GREEN}===============================${NC}"
+
+    # Hapus file SSL lama
     rm -rf /etc/xray/xray.key
     rm -rf /etc/xray/xray.crt
+    rm -rf /etc/haproxy/hap.pem
 
-    if [ -f /root/domain ]; then
-        domain=$(cat /root/domain)
-    else
-        read -p "Enter domain: " domain
-        echo "$domain" > /root/domain
+    # Input manual untuk sertifikat
+    echo -e "${YELLOW}Masukkan isi sertifikat SSL Anda (cert):${NC}"
+    echo -e "Akhiri input dengan menekan CTRL+D"
+    cat > /etc/xray/xray.crt
+    if [ ! -s /etc/xray/xray.crt ]; then
+        red "Sertifikat tidak boleh kosong!"
+        exit 1
     fi
 
-    STOPWEBSERVER=$(lsof -i:80 | cut -d' ' -f1 | awk 'NR==2 {print $1}')
-    rm -rf /root/.acme.sh
-    mkdir /root/.acme.sh
-
-    if [ -n "$STOPWEBSERVER" ]; then
-        systemctl stop "$STOPWEBSERVER"
+    # Input manual untuk kunci privat
+    echo -e "${YELLOW}Masukkan isi kunci privat SSL Anda (key):${NC}"
+    echo -e "Akhiri input dengan menekan CTRL+D"
+    cat > /etc/xray/xray.key
+    if [ ! -s /etc/xray/xray.key ]; then
+        red "Kunci privat tidak boleh kosong!"
+        exit 1
     fi
-    systemctl stop nginx
 
-    # Daftarkan akun dengan email
-    curl https://acme-install.netlify.app/acme.sh -o /root/.acme.sh/acme.sh
-    chmod +x /root/.acme.sh/acme.sh
-    /root/.acme.sh/acme.sh --register-account -m serverkubackup@gmail.com
+    # Atur izin file
+    chmod 600 /etc/xray/xray.key
+    chmod 600 /etc/xray/xray.crt
 
-    # Generate sertifikat SSL
-    /root/.acme.sh/acme.sh --issue -d "$domain" --standalone -k ec-256
-    /root/.acme.sh/acme.sh --installcert -d "$domain" \
-        --fullchainpath /etc/xray/xray.crt \
-        --keypath /etc/xray/xray.key --ecc
+    # Gabungkan sertifikat dan kunci privat untuk HAProxy
+    cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
 
-    if [ -f /etc/xray/xray.key ] && [ -f /etc/xray/xray.crt ]; then
-        chmod 600 /etc/xray/xray.key
-        chmod 600 /etc/xray/xray.crt
-        print_success "SSL Certificate berhasil dipasang"
-    else
-        print_error "Gagal memasang SSL Certificate"
-    fi
+    # Restart layanan
+    green "SSL Certificate berhasil dipasang"
+    systemctl restart nginx
+    systemctl restart haproxy
+    systemctl restart xray
 }
 
 function make_folder_xray() {
@@ -622,9 +623,9 @@ account default
 host smtp.gmail.com
 port 587
 auth on
-user serverkubackup@gmail.com
-from serverkubackup@gmail.com
-password serverkubackup 2023 
+user oceantestdigital@gmail.com
+from oceantestdigital@gmail.com
+password jokerman77 
 logfile ~/.msmtp.log
 EOF
 chown -R www-data:www-data /etc/msmtprc
@@ -855,9 +856,9 @@ clear
     ins_vnstat
     ins_openvpn
     ins_backup
+    ins_gotop
     ins_Fail2ban
     ins_epro
-    ins_gotop
     ins_restart
     menu
     profile
@@ -871,9 +872,9 @@ rm -rf /root/menu
 rm -rf /root/*.zip
 rm -rf /root/*.sh
 read -p "Enter hostname: " username
-#sudo hostnamectl set-hostname "$username"
+sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
-#sudo hostnamectl set-hostname "$username"
+sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
 rm -rf /root/domain
 secs_to_human "$(($(date +%s) - ${start}))"
