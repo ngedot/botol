@@ -231,7 +231,6 @@ function pasang_ssl() {
     # Hapus file SSL lama
     rm -rf /etc/xray/xray.key
     rm -rf /etc/xray/xray.crt
-    rm -rf /etc/haproxy/hap.pem
 
     # Input manual untuk sertifikat
     echo -e "${YELLOW}Masukkan isi sertifikat SSL Anda (cert):${NC}"
@@ -254,9 +253,6 @@ function pasang_ssl() {
     # Atur izin file
     chmod 600 /etc/xray/xray.key
     chmod 600 /etc/xray/xray.crt
-
-    # Gabungkan sertifikat dan kunci privat untuk HAProxy
-    cat /etc/xray/xray.crt /etc/xray/xray.key | tee /etc/haproxy/hap.pem
 
     # Restart layanan
     green "SSL Certificate berhasil dipasang"
@@ -871,10 +867,10 @@ history -c
 rm -rf /root/menu
 rm -rf /root/*.zip
 rm -rf /root/*.sh
-read -p "Enter hostname: " username
-sudo hostnamectl set-hostname "$username"
+#read -p "Enter hostname: " username
+#sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
-sudo hostnamectl set-hostname "$username"
+#sudo hostnamectl set-hostname "$username"
 rm -rf /root/README.md
 rm -rf /root/domain
 secs_to_human "$(($(date +%s) - ${start}))"
