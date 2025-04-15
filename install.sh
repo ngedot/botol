@@ -258,7 +258,7 @@ function pasang_ssl() {
     green "SSL Certificate berhasil dipasang"
     systemctl restart nginx
     systemctl restart haproxy
-    systemctl restart xray
+    #systemctl restart xray
 }
 
 function make_folder_xray() {
