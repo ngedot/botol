@@ -147,8 +147,6 @@ function base_package() {
     systemctl restart chronyd
     systemctl enable chrony
     systemctl restart chrony
-    chronyc sourcestats -v
-    chronyc tracking -v
     apt install ntpdate -y
     ntpdate pool.ntp.org
     apt install sudo -y
@@ -255,7 +253,7 @@ function pasang_ssl() {
     chmod 600 /etc/xray/xray.crt
 
     # Restart layanan
-    green "SSL Certificate berhasil dipasang"
+    print_success "SSL Certificate berhasil dipasang"
     systemctl restart nginx
     systemctl restart haproxy
     #systemctl restart xray
